@@ -1,20 +1,50 @@
-// Menu hambúrguer
-const hamburger = document.querySelector('.hamburger');
-const navLinks = document.querySelector('.nav-links');
 
-hamburger.addEventListener('click', () => {
-    navLinks.classList.toggle('active');
-});
+document.addEventListener('DOMContentLoaded', () => {
+    const navMenu = document.getElementById('nav-menu');
+    const navToggle = document.getElementById('nav-toggle');
+    const pageLinks = document.querySelectorAll('[data-page]');
+    const mainNavLinks = document.querySelectorAll('#nav-menu .nav-link');
+    const pages = document.querySelectorAll('.page');
 
-// Animações de scroll
-const elements = document.querySelectorAll("section, .card");
+    if (navToggle) {
+        navToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+        });
+    }
 
-window.addEventListener("scroll", () => {
-    elements.forEach(el => {
-        const position = el.getBoundingClientRect().top;
-        const screenHeight = window.innerHeight / 1.2;
-        if (position < screenHeight) {
-            el.classList.add("visible");
+    const showPage = (pageId) => {
+        const targetId = pageId.endsWith('-page') ? pageId : pageId + '-page';
+
+        pages.forEach(page => {
+            page.classList.remove('active');
+        });
+
+        const pageToShow = document.getElementById(targetId);
+        if (pageToShow) {
+            pageToShow.classList.add('active');
         }
+
+        mainNavLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.dataset.page === pageId) {
+                link.classList.add('active');
+            }
+        });
+
+        if (navMenu.classList.contains('active')) {
+            navMenu.classList.remove('active');
+        }
+
+        window.scrollTo(0, 0);
+    };
+
+    pageLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const pageId = link.dataset.page;
+            showPage(pageId);
+        });
     });
+
+    showPage('home');
 });
