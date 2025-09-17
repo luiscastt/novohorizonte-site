@@ -134,6 +134,10 @@ h2::after {
     font-size: 1.5rem;
     cursor: pointer;
     color: var(--white);
+    background: none;
+    border: none;
+    padding: 8px;
+    z-index: 1001;
 }
 
 .hero {
@@ -357,6 +361,15 @@ h2::after {
     .hero h1 {
         font-size: 2.5rem;
     }
+    
+    .hero p {
+        font-size: 1rem;
+        padding: 0 20px;
+    }
+    
+    .hero-content {
+        padding: 0 20px;
+    }
 
     .nav-menu {
         position: absolute;
@@ -368,6 +381,9 @@ h2::after {
         text-align: center;
         box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
         transition: right 0.4s ease;
+        padding: 20px 0;
+        max-height: calc(100vh - 70px);
+        overflow-y: auto;
     }
 
     .nav-menu.active {
@@ -375,30 +391,119 @@ h2::after {
     }
 
     .nav-item {
-        padding: 5px 0;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .nav-item:last-child {
+        border-bottom: none;
     }
 
     .nav-menu.active .nav-link {
         color: var(--text-color);
-
+        display: block;
+        padding: 15px 20px;
+        font-size: 1.1rem;
     }
 
     .nav-menu.active .nav-link:hover {
         color: var(--secondary-color);
+        background-color: var(--light-gray);
     }
 
     .nav-menu.active .nav-item a.active {
         background-color: var(--active-nav-color);
         color: var(--white);
     }
-
+    
+    .nav-menu.active #login-btn {
+        background: var(--accent-color);
+        color: var(--text-color);
+        margin: 10px 20px;
+        border-radius: 8px;
+        font-size: 1.1rem;
+    }
+    
+    .nav-menu.active #login-btn:hover {
+        background: #ffb300;
+    }
 
     .nav-toggle {
         display: block;
+    }
+    
+    /* Melhorar espaçamento em mobile */
+    .container {
+        padding: 0 15px;
+    }
+    
+    section {
+        padding: 60px 0;
+    }
+    
+    /* Cards de serviços em mobile */
+    .servicos-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .servico-card {
+        padding: 25px 20px;
+    }
+    
+    /* Cards de valores em mobile */
+    .valores-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .valor-card {
+        padding: 30px 20px;
+    }
+    
+    /* Formulário de contato em mobile */
+    .form-group input,
+    .form-group textarea {
+        font-size: 16px; /* Evita zoom no iOS */
+    }
+    
+    /* Botões em mobile */
+    .btn {
+        padding: 12px 25px;
+        font-size: 1rem;
+        display: inline-block;
+        text-align: center;
     }
 
     .sobre-content,
     .contato-content {
         flex-direction: column;
+        gap: 30px;
+    }
+    
+    /* Footer socials */
+    .footer-socials {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 10px;
+    }
+    
+    .footer-socials a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: var(--primary-color);
+        color: white;
+        border-radius: 50%;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .footer-socials a:hover {
+        background: var(--secondary-color);
+        transform: translateY(-2px);
     }
 }

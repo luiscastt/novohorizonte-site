@@ -344,11 +344,32 @@
   .auth-modal-content {
     margin: 10% auto;
     width: 95%;
+        max-height: 90vh;
+        overflow-y: auto;
   }
   
   .auth-body {
     padding: 20px;
   }
+    
+    .auth-header {
+        padding: 20px 20px 0;
+    }
+    
+    .social-btn {
+        padding: 15px 12px;
+        font-size: 16px;
+    }
+    
+    .auth-form input {
+        padding: 18px 15px;
+        font-size: 16px; /* Evita zoom no iOS */
+    }
+    
+    .auth-submit-btn {
+        padding: 18px 15px;
+        font-size: 16px;
+    }
   
   .user-name {
     display: none;
@@ -356,6 +377,47 @@
   
   .user-dropdown-menu {
     right: -10px;
+        min-width: 160px;
+    }
+    
+    .user-btn {
+        padding: 6px 10px;
+    }
+    
+    .user-avatar {
+        width: 28px;
+        height: 28px;
+    }
+}
+
+/* Melhorias para dispositivos touch */
+.touch-device .nav-link,
+.touch-device .btn,
+.touch-device .social-btn {
+    min-height: 44px; /* Tamanho mínimo recomendado para touch */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Melhorar área de toque dos botões */
+@media (max-width: 768px) {
+    .servico-card,
+    .valor-card {
+        cursor: pointer;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Melhorar formulários em mobile */
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+        -webkit-appearance: none;
+        border-radius: 8px;
+        padding: 18px 15px;
   }
 }
 
