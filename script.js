@@ -324,3 +324,22 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(item);
     });
 });
+
+// ========== CÓDIGO PARA MOSTRAR A TELA DE LOGIN ==========
+
+// Pega o botão "Entrar" pelo ID que demos a ele no HTML
+const loginBtn = document.getElementById('login-btn');
+
+// Adiciona um "ouvinte" que espera pelo clique no botão
+loginBtn.addEventListener('click', () => {
+    // Esconde todas as outras páginas
+    pages.forEach(p => p.classList.remove('active'));
+
+    // Mostra a página de login que acabamos de criar
+    const loginPage = document.getElementById('login-page');
+    loginPage.classList.add('active');
+
+    // Se estiver usando um menu hamburguer em telas pequenas, fecha ele
+    const navMenu = document.getElementById('nav-menu');
+    navMenu.classList.remove('active'); 
+});
