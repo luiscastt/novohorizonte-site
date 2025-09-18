@@ -528,3 +528,522 @@ h2::after {
         transform: translateY(-2px);
     }
 }
+
+/* ===== ESTILOS DA PÁGINA DE VAGAS ===== */
+
+/* Header da página de vagas */
+.vagas-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.vagas-subtitle {
+    font-size: 1.2rem;
+    color: #666;
+    margin-top: 15px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Filtros de categoria */
+.vagas-filters {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 40px;
+    padding: 0 20px;
+}
+
+.filter-btn {
+    padding: 12px 24px;
+    border: 2px solid var(--primary-color);
+    background: white;
+    color: var(--primary-color);
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 74, 141, 0.3);
+}
+
+/* Grid de vagas */
+.vagas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 30px;
+    margin-bottom: 60px;
+}
+
+/* Card de vaga */
+.vaga-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    border-top: 4px solid var(--primary-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.vaga-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.vaga-card.hidden {
+    display: none;
+}
+
+/* Header do card */
+.vaga-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.vaga-header h3 {
+    color: var(--primary-color);
+    font-size: 1.4rem;
+    margin: 0;
+    flex: 1;
+}
+
+.vaga-tipo {
+    background: var(--accent-color);
+    color: var(--text-color);
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* Informações da vaga */
+.vaga-info {
+    margin-bottom: 20px;
+}
+
+.vaga-info p {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    color: #666;
+    font-size: 14px;
+}
+
+.vaga-info i {
+    color: var(--primary-color);
+    width: 20px;
+    margin-right: 10px;
+    text-align: center;
+}
+
+/* Descrição da vaga */
+.vaga-description {
+    margin-bottom: 20px;
+}
+
+.vaga-description p {
+    line-height: 1.6;
+    color: #555;
+}
+
+/* Requisitos */
+.vaga-requisitos {
+    margin-bottom: 25px;
+}
+
+.vaga-requisitos h4 {
+    color: var(--primary-color);
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+.vaga-requisitos ul {
+    list-style: none;
+    padding: 0;
+}
+
+.vaga-requisitos li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 5px;
+    color: #666;
+    font-size: 14px;
+}
+
+.vaga-requisitos li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--secondary-color);
+    font-weight: bold;
+}
+
+/* Botão candidatar-se */
+.candidatar-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.candidatar-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 74, 141, 0.4);
+}
+
+.candidatar-btn i {
+    font-size: 14px;
+}
+
+/* Seção de benefícios */
+.beneficios-section {
+    background: var(--light-gray);
+    padding: 50px 30px;
+    border-radius: 15px;
+    text-align: center;
+    margin-top: 40px;
+}
+
+.beneficios-section h3 {
+    color: var(--primary-color);
+    font-size: 2rem;
+    margin-bottom: 30px;
+}
+
+.beneficios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 25px;
+}
+
+.beneficio-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease;
+}
+
+.beneficio-item:hover {
+    transform: translateY(-5px);
+}
+
+.beneficio-item i {
+    font-size: 2rem;
+    color: var(--secondary-color);
+}
+
+.beneficio-item span {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+/* ===== MODAL DE CANDIDATURA ===== */
+
+.candidatura-modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+}
+
+.candidatura-modal-content {
+    background-color: white;
+    margin: 2% auto;
+    padding: 0;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+.candidatura-close {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.3s ease;
+    z-index: 1;
+}
+
+.candidatura-close:hover {
+    color: #333;
+}
+
+.candidatura-header {
+    padding: 30px 30px 20px 30px;
+    border-bottom: 1px solid #eee;
+}
+
+.candidatura-header h2 {
+    margin: 0;
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    text-align: left;
+}
+
+.candidatura-header h2::after {
+    display: none;
+}
+
+.candidatura-body {
+    padding: 30px;
+}
+
+/* Formulário de candidatura */
+.candidatura-form .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.candidatura-form .form-group {
+    margin-bottom: 20px;
+}
+
+.candidatura-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.candidatura-form input,
+.candidatura-form select,
+.candidatura-form textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
+    transition: border-color 0.3s ease;
+}
+
+.candidatura-form input:focus,
+.candidatura-form select:focus,
+.candidatura-form textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 74, 141, 0.1);
+}
+
+.candidatura-form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Checkbox customizado */
+.checkbox-group {
+    margin: 25px 0;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.checkbox-label input[type="checkbox"] {
+    display: none;
+}
+
+.checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+    content: '✓';
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+/* Botão de envio */
+.candidatura-submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.candidatura-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 74, 141, 0.4);
+}
+
+/* ===== RESPONSIVIDADE PARA VAGAS ===== */
+
+@media (max-width: 768px) {
+    /* Filtros em mobile */
+    .vagas-filters {
+        gap: 10px;
+        padding: 0 10px;
+    }
+    
+    .filter-btn {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+    
+    /* Grid de vagas em mobile */
+    .vagas-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .vaga-card {
+        padding: 20px;
+    }
+    
+    .vaga-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+    
+    .vaga-header h3 {
+        font-size: 1.2rem;
+    }
+    
+    /* Benefícios em mobile */
+    .beneficios-section {
+        padding: 30px 20px;
+    }
+    
+    .beneficios-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .beneficio-item {
+        padding: 15px 10px;
+    }
+    
+    .beneficio-item i {
+        font-size: 1.5rem;
+    }
+    
+    .beneficio-item span {
+        font-size: 14px;
+        text-align: center;
+    }
+    
+    /* Modal em mobile */
+    .candidatura-modal-content {
+        margin: 5% auto;
+        width: 95%;
+        max-height: 85vh;
+    }
+    
+    .candidatura-header,
+    .candidatura-body {
+        padding: 20px;
+    }
+    
+    .candidatura-header h2 {
+        font-size: 1.3rem;
+        padding-right: 40px;
+    }
+    
+    /* Formulário em mobile */
+    .candidatura-form .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+    
+    .candidatura-form input,
+    .candidatura-form select,
+    .candidatura-form textarea {
+        font-size: 16px; /* Evita zoom no iOS */
+    }
+    
+    .checkbox-label {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .vagas-subtitle {
+        font-size: 1rem;
+        padding: 0 10px;
+    }
+    
+    .beneficios-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .filter-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+}

@@ -27,6 +27,7 @@
                 <li class="nav-item"><a class="nav-link" data-page="home">Início</a></li>
                 <li class="nav-item"><a class="nav-link" data-page="sobre">A Empresa</a></li>
                 <li class="nav-item"><a class="nav-link" data-page="servicos">Serviços</a></li>
+                <li class="nav-item"><a class="nav-link" data-page="vagas">Vagas</a></li>
                 <li class="nav-item"><a class="nav-link" data-page="contato">Contato</a></li>
                 <li class="nav-item">
                     <button id="login-btn" class="nav-link">Entrar</button>
@@ -271,6 +272,199 @@
                 </div>
             </div>
         </section>
+
+        <section id="vagas-page" class="page">
+            <div class="container">
+                <div class="vagas-header">
+                    <h2>Oportunidades de Carreira</h2>
+                    <p class="vagas-subtitle">Faça parte da nossa equipe e construa uma carreira sólida conosco</p>
+                </div>
+
+                <!-- Filtros de Categoria -->
+                <div class="vagas-filters">
+                    <button class="filter-btn active" data-category="todas">Todas as Vagas</button>
+                    <button class="filter-btn" data-category="recepcionista">Recepcionista</button>
+                    <button class="filter-btn" data-category="auxiliar">Auxiliar de Serviços Gerais</button>
+                    <button class="filter-btn" data-category="portaria">Portaria</button>
+                    <button class="filter-btn" data-category="copeiro">Copeiro</button>
+                    <button class="filter-btn" data-category="administrativo">Assistente Administrativo</button>
+                </div>
+
+                <!-- Lista de Vagas -->
+                <div class="vagas-grid" id="vagas-grid">
+                    <!-- Vaga 1: Recepcionista -->
+                    <div class="vaga-card" data-category="recepcionista">
+                        <div class="vaga-header">
+                            <h3>Recepcionista</h3>
+                            <span class="vaga-tipo">CLT</span>
+                        </div>
+                        <div class="vaga-info">
+                            <p><i class="fas fa-map-marker-alt"></i> Serra - ES</p>
+                            <p><i class="fas fa-clock"></i> Segunda a Sexta</p>
+                            <p><i class="fas fa-graduation-cap"></i> Ensino Médio Completo</p>
+                        </div>
+                        <div class="vaga-description">
+                            <p>Responsável pelo atendimento ao público, controle de acesso, atendimento telefônico e atividades administrativas básicas.</p>
+                        </div>
+                        <div class="vaga-requisitos">
+                            <h4>Requisitos:</h4>
+                            <ul>
+                                <li>Experiência em atendimento ao público</li>
+                                <li>Boa comunicação verbal e escrita</li>
+                                <li>Conhecimentos básicos de informática</li>
+                                <li>Disponibilidade de horário</li>
+                            </ul>
+                        </div>
+                        <button class="candidatar-btn" onclick="abrirFormularioCandidatura('Recepcionista')">
+                            <i class="fas fa-paper-plane"></i> Candidatar-se
+                        </button>
+                    </div>
+
+                    <!-- Vaga 2: Auxiliar de Serviços Gerais -->
+                    <div class="vaga-card" data-category="auxiliar">
+                        <div class="vaga-header">
+                            <h3>Auxiliar de Serviços Gerais</h3>
+                            <span class="vaga-tipo">CLT</span>
+                        </div>
+                        <div class="vaga-info">
+                            <p><i class="fas fa-map-marker-alt"></i> Serra - ES</p>
+                            <p><i class="fas fa-clock"></i> Escala 6x1</p>
+                            <p><i class="fas fa-graduation-cap"></i> Ensino Fundamental</p>
+                        </div>
+                        <div class="vaga-description">
+                            <p>Execução de serviços de limpeza e conservação predial, manutenção da organização e higiene dos ambientes.</p>
+                        </div>
+                        <div class="vaga-requisitos">
+                            <h4>Requisitos:</h4>
+                            <ul>
+                                <li>Experiência em limpeza predial</li>
+                                <li>Conhecimento em produtos de limpeza</li>
+                                <li>Responsabilidade e pontualidade</li>
+                                <li>Disponibilidade para trabalhar em turnos</li>
+                            </ul>
+                        </div>
+                        <button class="candidatar-btn" onclick="abrirFormularioCandidatura('Auxiliar de Serviços Gerais')">
+                            <i class="fas fa-paper-plane"></i> Candidatar-se
+                        </button>
+                    </div>
+
+                    <!-- Vaga 3: Portaria -->
+                    <div class="vaga-card" data-category="portaria">
+                        <div class="vaga-header">
+                            <h3>Porteiro</h3>
+                            <span class="vaga-tipo">CLT</span>
+                        </div>
+                        <div class="vaga-info">
+                            <p><i class="fas fa-map-marker-alt"></i> Serra - ES</p>
+                            <p><i class="fas fa-clock"></i> 12x36</p>
+                            <p><i class="fas fa-graduation-cap"></i> Ensino Médio Completo</p>
+                        </div>
+                        <div class="vaga-description">
+                            <p>Controle de acesso de pessoas e veículos, monitoramento de segurança e atendimento aos moradores/funcionários.</p>
+                        </div>
+                        <div class="vaga-requisitos">
+                            <h4>Requisitos:</h4>
+                            <ul>
+                                <li>Experiência em portaria ou segurança</li>
+                                <li>Curso de porteiro (desejável)</li>
+                                <li>Boa apresentação pessoal</li>
+                                <li>Disponibilidade para trabalhar em turnos</li>
+                            </ul>
+                        </div>
+                        <button class="candidatar-btn" onclick="abrirFormularioCandidatura('Porteiro')">
+                            <i class="fas fa-paper-plane"></i> Candidatar-se
+                        </button>
+                    </div>
+
+                    <!-- Vaga 4: Copeiro -->
+                    <div class="vaga-card" data-category="copeiro">
+                        <div class="vaga-header">
+                            <h3>Copeiro</h3>
+                            <span class="vaga-tipo">CLT</span>
+                        </div>
+                        <div class="vaga-info">
+                            <p><i class="fas fa-map-marker-alt"></i> Serra - ES</p>
+                            <p><i class="fas fa-clock"></i> Segunda a Sexta</p>
+                            <p><i class="fas fa-graduation-cap"></i> Ensino Fundamental</p>
+                        </div>
+                        <div class="vaga-description">
+                            <p>Preparo e servimento de café, chás e lanches, manutenção da copa e cozinha, atendimento em reuniões e eventos.</p>
+                        </div>
+                        <div class="vaga-requisitos">
+                            <h4>Requisitos:</h4>
+                            <ul>
+                                <li>Experiência em copa/cozinha</li>
+                                <li>Conhecimentos básicos de culinária</li>
+                                <li>Organização e higiene</li>
+                                <li>Boa apresentação pessoal</li>
+                            </ul>
+                        </div>
+                        <button class="candidatar-btn" onclick="abrirFormularioCandidatura('Copeiro')">
+                            <i class="fas fa-paper-plane"></i> Candidatar-se
+                        </button>
+                    </div>
+
+                    <!-- Vaga 5: Assistente Administrativo -->
+                    <div class="vaga-card" data-category="administrativo">
+                        <div class="vaga-header">
+                            <h3>Assistente Administrativo</h3>
+                            <span class="vaga-tipo">CLT</span>
+                        </div>
+                        <div class="vaga-info">
+                            <p><i class="fas fa-map-marker-alt"></i> Serra - ES</p>
+                            <p><i class="fas fa-clock"></i> Segunda a Sexta</p>
+                            <p><i class="fas fa-graduation-cap"></i> Ensino Médio Completo</p>
+                        </div>
+                        <div class="vaga-description">
+                            <p>Apoio às atividades administrativas, controle de documentos, atendimento telefônico e suporte aos departamentos.</p>
+                        </div>
+                        <div class="vaga-requisitos">
+                            <h4>Requisitos:</h4>
+                            <ul>
+                                <li>Experiência em rotinas administrativas</li>
+                                <li>Conhecimento em pacote Office</li>
+                                <li>Organização e proatividade</li>
+                                <li>Boa comunicação</li>
+                            </ul>
+                        </div>
+                        <button class="candidatar-btn" onclick="abrirFormularioCandidatura('Assistente Administrativo')">
+                            <i class="fas fa-paper-plane"></i> Candidatar-se
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Seção de Benefícios -->
+                <div class="beneficios-section">
+                    <h3>Nossos Benefícios</h3>
+                    <div class="beneficios-grid">
+                        <div class="beneficio-item">
+                            <i class="fas fa-heart"></i>
+                            <span>Plano de Saúde</span>
+                        </div>
+                        <div class="beneficio-item">
+                            <i class="fas fa-tooth"></i>
+                            <span>Plano Odontológico</span>
+                        </div>
+                        <div class="beneficio-item">
+                            <i class="fas fa-utensils"></i>
+                            <span>Vale Alimentação</span>
+                        </div>
+                        <div class="beneficio-item">
+                            <i class="fas fa-bus"></i>
+                            <span>Vale Transporte</span>
+                        </div>
+                        <div class="beneficio-item">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Treinamentos</span>
+                        </div>
+                        <div class="beneficio-item">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Plano de Carreira</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer class="footer">
@@ -279,6 +473,72 @@
         </div>
     </footer>
 
+    <!-- Modal de Candidatura -->
+    <div id="candidatura-modal" class="candidatura-modal">
+        <div class="candidatura-modal-content">
+            <span class="candidatura-close">&times;</span>
+            <div class="candidatura-header">
+                <h2>Candidatar-se para: <span id="vaga-titulo"></span></h2>
+            </div>
+            <div class="candidatura-body">
+                <form id="candidatura-form" class="candidatura-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nome-completo">Nome Completo *</label>
+                            <input type="text" id="nome-completo" name="nome" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email-candidato">E-mail *</label>
+                            <input type="email" id="email-candidato" name="email" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="telefone">Telefone *</label>
+                            <input type="tel" id="telefone" name="telefone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="idade">Idade</label>
+                            <input type="number" id="idade" name="idade" min="16" max="70">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="endereco">Endereço Completo</label>
+                        <input type="text" id="endereco" name="endereco" placeholder="Rua, número, bairro, cidade">
+                    </div>
+                    <div class="form-group">
+                        <label for="experiencia">Experiência Profissional *</label>
+                        <textarea id="experiencia" name="experiencia" rows="4" placeholder="Descreva sua experiência na área..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="disponibilidade">Disponibilidade de Horário</label>
+                        <select id="disponibilidade" name="disponibilidade">
+                            <option value="">Selecione...</option>
+                            <option value="manha">Manhã</option>
+                            <option value="tarde">Tarde</option>
+                            <option value="noite">Noite</option>
+                            <option value="integral">Período Integral</option>
+                            <option value="escala">Escala (12x36, 6x1)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="observacoes">Observações Adicionais</label>
+                        <textarea id="observacoes" name="observacoes" rows="3" placeholder="Informações adicionais que gostaria de compartilhar..."></textarea>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="aceito-termos" required>
+                            <span class="checkmark"></span>
+                            Aceito os termos de uso e autorizo o tratamento dos meus dados pessoais conforme a LGPD
+                        </label>
+                    </div>
+                    <button type="submit" class="candidatura-submit-btn">
+                        <i class="fas fa-paper-plane"></i> Enviar Candidatura
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
     <script src="script.js"></script>
     <script type="module" src="src/main.js"></script>
 
