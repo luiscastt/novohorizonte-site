@@ -324,26 +324,3 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(item);
     });
 });
-
-// ========== CÓDIGO CORRIGIDO PARA A TELA DE LOGIN ==========
-
-// Pega o botão "Entrar" pelo ID
-const loginBtn = document.getElementById('login-btn');
-
-// Adiciona um "ouvinte" que espera pelo clique no botão
-loginBtn.addEventListener('click', () => {
-    // ESTA É A LINHA QUE FALTAVA:
-    // Pega todos os elementos com a classe '.page'
-    const pages = document.querySelectorAll('.page');
-
-    // Agora, esconde todas as outras páginas
-    pages.forEach(p => p.classList.remove('active'));
-
-    // Mostra a página de login que acabamos de criar
-    const loginPage = document.getElementById('login-page');
-    loginPage.classList.add('active');
-
-    // Fecha o menu hamburguer (se estiver aberto)
-    const navMenu = document.getElementById('nav-menu');
-    navMenu.classList.remove('active'); 
-});
