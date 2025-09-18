@@ -465,52 +465,33 @@
                 </div>
             </div>
         </section>
-      <div id="login-modal" class="modal-overlay">
-    <div class="modal-card">
-        <button id="modal-close-btn" class="modal-close-btn">&times;</button>
-        <div class="modal-tabs">
-            <a href="#" class="tab active" data-tab="entrar">Entrar</a>
-            <a href="#" class="tab" data-tab="cadastrar">Cadastrar</a>
-        </div>
-
-        <div id="entrar-tab" class="tab-content active">
-            <div class="social-login">
-                <button class="social-btn google"><i class="fab fa-google"></i> Continuar com Google</button>
-                <button class="social-btn linkedin"><i class="fab fa-linkedin-in"></i> Continuar com LinkedIn</button>
-            </div>
-            <div class="divider">ou</div>
+      <section id="login-page" class="page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <h2>Área do Colaborador</h2>
+            <p>Acesse sua conta para continuar</p>
             <form class="auth-form">
                 <div class="form-group">
-                    <input type="email" id="email-login" placeholder="E-mail" required>
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" placeholder="seuemail@exemplo.com" required>
                 </div>
                 <div class="form-group">
-                    <input type="password" id="senha-login" placeholder="Senha" required>
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" placeholder="********" required>
+                </div>
+                <div class="form-options">
+                    <a href="#" class="forgot-password">Esqueceu a senha?</a>
                 </div>
                 <button type="submit" class="btn-auth">Entrar</button>
             </form>
         </div>
-
-        <div id="cadastrar-tab" class="tab-content">
-            <form class="auth-form">
-                <div class="form-group">
-                    <input type="text" id="nome-cadastro" placeholder="Nome Completo" required>
-                </div>
-                <div class="form-group">
-                    <input type="email" id="email-cadastro" placeholder="E-mail" required>
-                </div>
-                <div class="form-group">
-                    <input type="password" id="senha-cadastro" placeholder="Crie uma Senha" required>
-                </div>
-                <button type="submit" class="btn-auth">Cadastrar</button>
-            </form>
-        </div>
     </div>
-</div>
+</section>
     </main>
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 Sudeste Conservadora. Todos os direitos reservados.</p>
+            <p>&copy; 2024 Novo Horizonte Conservadora. Todos os direitos reservados.</p>
         </div>
     </footer>
 
