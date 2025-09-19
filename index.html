@@ -6,15 +6,13 @@
     <meta name="theme-color" content="#004a8d">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <title>Novo Horizonte Conservadora - Soluções em Terceirização</title>
     <title>Sudeste Conservadora e Serviços Gerais - Soluções em Terceirização</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="src/styles/auth.css">
-
 </head>
 <body>
 
@@ -39,11 +37,12 @@
 
     <main>
         <div id="home-page" class="page active">
+            
             <section class="hero" id="home">
                 <div class="hero-content">
                     <h1>Excelência em Terceirização de Serviços</h1>
                     <p>Desde 2007, oferecendo excelência, qualidade e compromisso para empresas e condomínios.</p>
-                    <a href="#servicos" class="btn">Conheça Nossos Serviços</a>
+                    <a href="#" data-page="servicos" class="btn">Conheça Nossos Serviços</a>
                 </div>
             </section>
 
@@ -120,6 +119,21 @@
                     </div>
                 </div>
             </section>
+
+            <section id="orcamento" class="orcamento-section">
+    <div class="orcamento-background-top"></div>
+    <div class="orcamento-background-bottom"></div>
+    <div class="container orcamento-content-wrapper">
+        <div class="orcamento-text-content">
+            <h2>Simule seu orçamento!</h2>
+            <p>Solicite um orçamento e nossa equipe comercial irá montar a melhor proposta adequada para as suas necessidades.</p>
+            <a href="#" data-page="contato" class="btn">Solicite um Orçamento</a>
+        </div>
+        <div class="orcamento-image-container">
+            <img src="IMAGES/hero-mulher-apontando.png" alt="Atendente pronta para simular seu orçamento">
+        </div>
+    </div>
+</section>
             
             <section id="contato">
                 <div class="container">
@@ -175,7 +189,7 @@
                 </div>
                 <div class="sobre-texto">
                     <p>Consolidamos a terceirização dos serviços com o foco na modernização dos processos, na prática da melhoria contínua e na cultura do atendimento com compromisso e responsabilidade.</p>
-                    <p>A Novo Horizonte Conservadora Ltda tem uma gestão comprometida e eficaz que, de modo estratégico, alinha seus objetivos com os melhores resultados para a satisfação total de seus contratantes. Isso porque, com modernidade, experiência e inovação, a Novo Horizonte Conservadora assegura as melhores práticas e tecnologias em seus serviços, adquirindo credibilidade e confiança em sua trajetória.</p>
+                    <p>A Sudeste Conservadora e Serviços Gerais tem uma gestão comprometida e eficaz que, de modo estratégico, alinha seus objetivos com os melhores resultados para a satisfação total de seus contratantes. Isso porque, com modernidade, experiência e inovação, a Sudeste Conservadora assegura as melhores práticas e tecnologias em seus serviços, adquirindo credibilidade e confiança em sua trajetória.</p>
                 </div>
                 <div class="valores-grid" style="margin-top: 60px;">
                     <div class="valor-card">
@@ -281,20 +295,16 @@
                     <p class="vagas-subtitle">Faça parte da nossa equipe e construa uma carreira sólida conosco</p>
                 </div>
 
-                <!-- Filtros de Categoria -->
                 <div class="vagas-filters">
                     <button class="filter-btn active" data-category="todas">Todas as Vagas</button>
                     <button class="filter-btn" data-category="recepcionista">Recepcionista</button>
                     <button class="filter-btn" data-category="auxiliar">Auxiliar de Serviços Gerais</button>
                     <button class="filter-btn" data-category="portaria">Portaria</button>
-                    <button class="filter-btn" data-category="copeiro">Copeiro</button>
                     <button class="filter-btn" data-category="copeiragem">Copeiragem</button>
                     <button class="filter-btn" data-category="administrativo">Assistente Administrativo</button>
                 </div>
 
-                <!-- Lista de Vagas -->
                 <div class="vagas-grid" id="vagas-grid">
-                    <!-- Vaga 1: Recepcionista -->
                     <div class="vaga-card" data-category="recepcionista">
                         <div class="vaga-header">
                             <h3>Recepcionista</h3>
@@ -322,7 +332,6 @@
                         </button>
                     </div>
 
-                    <!-- Vaga 2: Auxiliar de Serviços Gerais -->
                     <div class="vaga-card" data-category="auxiliar">
                         <div class="vaga-header">
                             <h3>Auxiliar de Serviços Gerais</h3>
@@ -350,7 +359,6 @@
                         </button>
                     </div>
 
-                    <!-- Vaga 3: Portaria -->
                     <div class="vaga-card" data-category="portaria">
                         <div class="vaga-header">
                             <h3>Porteiro</h3>
@@ -378,7 +386,6 @@
                         </button>
                     </div>
 
-                    <!-- Vaga 4: Copeiro -->
                     <div class="vaga-card" data-category="copeiragem">
                         <div class="vaga-header">
                             <h3>Copeiragem</h3>
@@ -401,13 +408,11 @@
                                 <li>Boa apresentação pessoal</li>
                             </ul>
                         </div>
-                        <button class="candidatar-btn" onclick="abrirFormularioCandidatura('Copeiro')">
                         <button class="candidatar-btn" onclick="abrirFormularioCandidatura('Copeiragem')">
                             <i class="fas fa-paper-plane"></i> Candidatar-se
                         </button>
                     </div>
 
-                    <!-- Vaga 5: Assistente Administrativo -->
                     <div class="vaga-card" data-category="administrativo">
                         <div class="vaga-header">
                             <h3>Assistente Administrativo</h3>
@@ -436,7 +441,6 @@
                     </div>
                 </div>
 
-                <!-- Seção de Benefícios -->
                 <div class="beneficios-section">
                     <h3>Nossos Benefícios</h3>
                     <div class="beneficios-grid">
@@ -471,12 +475,43 @@
     </main>
 
     <footer class="footer">
-        <div class="container">
-            <p>&copy; 2024 Sudeste Conservadora e Serviços Gerais. Todos os direitos reservados.</p>
+        <div class="container footer-grid">
+            <div class="footer-column">
+                <img src="IMAGES/Logo_01.png" alt="Logo Sudeste Conservadora" class="footer-logo">
+                <p class="footer-description">Desde 2007, oferecendo excelência, qualidade e compromisso para empresas e condomínios.</p>
+            </div>
+            <div class="footer-column">
+                <h3>Navegação</h3>
+                <ul class="footer-links">
+                    <li><a href="#" data-page="home">Início</a></li>
+                    <li><a href="#" data-page="sobre">A Empresa</a></li>
+                    <li><a href="#" data-page="servicos">Serviços</a></li>
+                    <li><a href="#" data-page="vagas">Vagas</a></li>
+                    <li><a href="#" data-page="contato">Contato</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Contato</h3>
+                <ul class="footer-contact">
+                    <li><i class="fas fa-map-marker-alt"></i><span>Av. Eudes Scherrer de Souza, 975, Sala 915/916, Serra - ES</span></li>
+                    <li><i class="fas fa-phone"></i><span>(27) 3086-3086</span></li>
+                    <li><i class="fas fa-envelope"></i><span>contato@sudesteconservadora.com.br</span></li>
+                </ul>
+                <a href="#" class="btn footer-btn" data-page="vagas">Trabalhe Conosco</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container footer-bottom-content">
+                <p>&copy; 2024 Sudeste Conservadora e Serviços Gerais. Todos os direitos reservados.</p>
+                <div class="footer-socials">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
         </div>
     </footer>
 
-    <!-- Modal de Candidatura -->
     <div id="candidatura-modal" class="candidatura-modal">
         <div class="candidatura-modal-content">
             <span class="candidatura-close">&times;</span>
@@ -542,6 +577,7 @@
             </div>
         </div>
     </div>
+
     <script src="script.js"></script>
     <script type="module" src="src/main.js"></script>
 

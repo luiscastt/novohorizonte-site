@@ -164,9 +164,6 @@ h2::after {
 .hero-content {
     position: relative;
     z-index: 2;
-}
-
-.hero-content {
     max-width: 800px;
     margin: auto;
 }
@@ -201,6 +198,7 @@ h2::after {
     background: #ffb300;
     transform: translateY(-3px);
 }
+
 
 #sobre,
 #sobre-page {
@@ -322,7 +320,63 @@ h2::after {
 
 .servico-card p {
     text-align: left;
+}
 
+/* NOVA SEÇÃO ORÇAMENTO CTA VISUAL */
+.orcamento-cta-visual {
+    background-color: var(--accent-color);
+    overflow: hidden;
+}
+
+.orcamento-cta-visual-content {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.orcamento-cta-visual-texto {
+    flex: 1;
+    max-width: 600px;
+    text-align: left;
+}
+
+.orcamento-cta-visual-texto h2 {
+    color: var(--primary-color);
+    text-align: left;
+    font-size: 3.2rem;
+    margin-bottom: 20px;
+}
+
+.orcamento-cta-visual-texto h2::after {
+    margin: 10px 0 0;
+    background: var(--primary-color);
+}
+
+.orcamento-cta-visual-texto p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    color: var(--text-color);
+}
+
+.orcamento-cta-visual-texto .btn {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 15px 35px;
+    font-size: 1.1rem;
+}
+
+.orcamento-cta-visual-texto .btn:hover {
+    background-color: #003a6b;
+}
+
+.orcamento-cta-visual-imagem {
+    flex: 1;
+    max-width: 450px;
+}
+
+.orcamento-cta-visual-imagem img {
+    width: 100%;
+    height: auto;
 }
 
 .contato-content {
@@ -367,18 +421,125 @@ h2::after {
 }
 
 
+/* NOVO RODAPÉ */
 .footer {
-    background: #222;
-    color: var(--white);
-    padding: 20px 0;
-    text-align: center;
+    background: var(--primary-color);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 60px 0 0 0;
+    text-align: left;
 }
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr;
+    gap: 40px;
+    padding-bottom: 40px;
+}
+
+.footer-column h3 {
+    color: var(--white);
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.footer-logo {
+    max-width: 180px;
+    margin-bottom: 15px;
+}
+
+.footer-description {
+    line-height: 1.7;
+    max-width: 300px;
+}
+
+.footer-links, .footer-contact {
+    list-style: none;
+}
+
+.footer-links li, .footer-contact li {
+    margin-bottom: 10px;
+}
+
+.footer-links a {
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.8);
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--accent-color);
+}
+
+.footer-contact li {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.footer-contact i {
+    margin-top: 5px;
+    color: var(--accent-color);
+}
+
+.footer-btn {
+    display: inline-block;
+    margin-top: 20px;
+    background-color: var(--accent-color);
+    color: var(--text-color);
+    padding: 12px 25px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.footer-btn:hover {
+    background-color: #ffb300;
+    transform: translateY(-2px);
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px 0;
+}
+
+.footer-bottom-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.footer-socials {
+    display: flex;
+    gap: 10px;
+}
+
+.footer-socials a {
+    color: var(--white);
+    background-color: rgba(255, 255, 255, 0.1);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.footer-socials a:hover {
+    background-color: var(--accent-color);
+    color: var(--text-color);
+}
+
 
 @media (max-width: 768px) {
     h2 {
         font-size: 2.2rem;
     }
-
+    
     .hero h1 {
         font-size: 2.5rem;
     }
@@ -387,11 +548,21 @@ h2::after {
         font-size: 1rem;
         padding: 0 20px;
     }
-    
-    .hero-content {
-        padding: 0 20px;
+
+    .orcamento-cta-visual-content {
+        flex-direction: column;
+        text-align: center;
     }
 
+    .orcamento-cta-visual-texto h2 {
+        text-align: center;
+        font-size: 2.5rem;
+    }
+
+    .orcamento-cta-visual-texto h2::after {
+        margin: 10px auto 0;
+    }
+    
     .nav-menu {
         position: absolute;
         top: 70px;
@@ -453,7 +624,6 @@ h2::after {
         display: block;
     }
     
-    /* Melhorar espaçamento em mobile */
     .container {
         padding: 0 15px;
     }
@@ -462,7 +632,6 @@ h2::after {
         padding: 60px 0;
     }
     
-    /* Cards de serviços em mobile */
     .servicos-grid {
         grid-template-columns: 1fr;
         gap: 20px;
@@ -472,7 +641,6 @@ h2::after {
         padding: 25px 20px;
     }
     
-    /* Cards de valores em mobile */
     .valores-grid {
         grid-template-columns: 1fr;
         gap: 20px;
@@ -482,13 +650,11 @@ h2::after {
         padding: 30px 20px;
     }
     
-    /* Formulário de contato em mobile */
     .form-group input,
     .form-group textarea {
-        font-size: 16px; /* Evita zoom no iOS */
+        font-size: 16px;
     }
     
-    /* Botões em mobile */
     .btn {
         padding: 12px 25px;
         font-size: 1rem;
@@ -501,37 +667,36 @@ h2::after {
         flex-direction: column;
         gap: 30px;
     }
-    
-    /* Footer socials */
-    .footer-socials {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin-top: 10px;
+
+    .footer-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
     }
-    
-    .footer-socials a {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        background: var(--primary-color);
-        color: white;
-        border-radius: 50%;
-        text-decoration: none;
-        transition: all 0.3s ease;
+
+    .footer-logo, .footer-description {
+        margin-left: auto;
+        margin-right: auto;
     }
-    
-    .footer-socials a:hover {
-        background: var(--secondary-color);
-        transform: translateY(-2px);
+
+    .footer-contact li {
+        justify-content: center;
+        text-align: left;
+    }
+
+    .footer-bottom-content {
+        flex-direction: column;
+        gap: 20px;
     }
 }
 
-/* ===== ESTILOS DA PÁGINA DE VAGAS ===== */
+@media (max-width: 992px) {
+    .footer-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
 
-/* Header da página de vagas */
+
+/* ===== ESTILOS DA PÁGINA DE VAGAS ===== */
 .vagas-header {
     text-align: center;
     margin-bottom: 50px;
@@ -546,7 +711,6 @@ h2::after {
     margin-right: auto;
 }
 
-/* Filtros de categoria */
 .vagas-filters {
     display: flex;
     justify-content: center;
@@ -577,7 +741,6 @@ h2::after {
     box-shadow: 0 5px 15px rgba(0, 74, 141, 0.3);
 }
 
-/* Grid de vagas */
 .vagas-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -585,7 +748,6 @@ h2::after {
     margin-bottom: 60px;
 }
 
-/* Card de vaga */
 .vaga-card {
     background: white;
     border-radius: 15px;
@@ -606,7 +768,6 @@ h2::after {
     display: none;
 }
 
-/* Header do card */
 .vaga-header {
     display: flex;
     justify-content: space-between;
@@ -631,7 +792,6 @@ h2::after {
     text-transform: uppercase;
 }
 
-/* Informações da vaga */
 .vaga-info {
     margin-bottom: 20px;
 }
@@ -651,7 +811,6 @@ h2::after {
     text-align: center;
 }
 
-/* Descrição da vaga */
 .vaga-description {
     margin-bottom: 20px;
 }
@@ -661,7 +820,6 @@ h2::after {
     color: #555;
 }
 
-/* Requisitos */
 .vaga-requisitos {
     margin-bottom: 25px;
 }
@@ -693,7 +851,6 @@ h2::after {
     font-weight: bold;
 }
 
-/* Botão candidatar-se */
 .candidatar-btn {
     width: 100%;
     padding: 15px;
@@ -720,7 +877,6 @@ h2::after {
     font-size: 14px;
 }
 
-/* Seção de benefícios */
 .beneficios-section {
     background: var(--light-gray);
     padding: 50px 30px;
@@ -831,7 +987,6 @@ h2::after {
     padding: 30px;
 }
 
-/* Formulário de candidatura */
 .candidatura-form .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -875,7 +1030,6 @@ h2::after {
     min-height: 100px;
 }
 
-/* Checkbox customizado */
 .checkbox-group {
     margin: 25px 0;
 }
@@ -918,7 +1072,6 @@ h2::after {
     font-size: 12px;
 }
 
-/* Botão de envio */
 .candidatura-submit-btn {
     width: 100%;
     padding: 15px;
@@ -941,10 +1094,7 @@ h2::after {
     box-shadow: 0 8px 25px rgba(0, 74, 141, 0.4);
 }
 
-/* ===== RESPONSIVIDADE PARA VAGAS ===== */
-
 @media (max-width: 768px) {
-    /* Filtros em mobile */
     .vagas-filters {
         gap: 10px;
         padding: 0 10px;
@@ -955,7 +1105,6 @@ h2::after {
         font-size: 13px;
     }
     
-    /* Grid de vagas em mobile */
     .vagas-grid {
         grid-template-columns: 1fr;
         gap: 20px;
@@ -975,7 +1124,6 @@ h2::after {
         font-size: 1.2rem;
     }
     
-    /* Benefícios em mobile */
     .beneficios-section {
         padding: 30px 20px;
     }
@@ -998,7 +1146,6 @@ h2::after {
         text-align: center;
     }
     
-    /* Modal em mobile */
     .candidatura-modal-content {
         margin: 5% auto;
         width: 95%;
@@ -1015,7 +1162,6 @@ h2::after {
         padding-right: 40px;
     }
     
-    /* Formulário em mobile */
     .candidatura-form .form-row {
         grid-template-columns: 1fr;
         gap: 0;
@@ -1024,7 +1170,7 @@ h2::after {
     .candidatura-form input,
     .candidatura-form select,
     .candidatura-form textarea {
-        font-size: 16px; /* Evita zoom no iOS */
+        font-size: 16px;
     }
     
     .checkbox-label {
@@ -1045,5 +1191,172 @@ h2::after {
     .filter-btn {
         padding: 8px 12px;
         font-size: 12px;
+    }
+}
+
+/* NOVA SEÇÃO ORÇAMENTO COM DESIGN DA REFERÊNCIA */
+.orcamento-section {
+    position: relative;
+    padding: 0; /* Remove padding padrão para controlar o espaçamento interno com os backgrounds */
+    height: 450px; /* Altura fixa para a seção, ajuste conforme necessário */
+    overflow: hidden; /* Garante que nada saia dos limites */
+    display: flex;
+    align-items: center; /* Centraliza o conteúdo verticalmente */
+}
+
+.orcamento-background-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50%; /* Metade de cima é azul */
+    background-color: var(--primary-color); /* Azul escuro */
+    z-index: 0;
+}
+
+.orcamento-background-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50%; /* Metade de baixo é amarela */
+    background-color: var(--accent-color); /* Amarelo */
+    z-index: 0;
+}
+
+.orcamento-content-wrapper {
+    position: relative;
+    z-index: 1; /* Garante que o conteúdo fique acima dos backgrounds */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%; /* Ocupa a altura total da seção */
+}
+
+.orcamento-text-content {
+    flex: 1;
+    padding: 20px;
+    max-width: 650px; /* Ajuste conforme a área de texto que deseja */
+    text-align: left;
+    color: var(--text-color); /* Cor padrão para o texto */
+}
+
+.orcamento-text-content h2 {
+    color: var(--white); /* Título em branco para contraste com o azul e amarelo */
+    text-align: left;
+    font-size: 3.2rem;
+    margin-bottom: 15px;
+}
+
+.orcamento-text-content h2::after {
+    display: none; /* Remove o sublinhado padrão do h2 */
+}
+
+.orcamento-text-content p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    color: var(--white); /* Parágrafo em branco */
+}
+
+.orcamento-text-content .btn {
+    background-color: var(--primary-color); /* Botão azul */
+    color: var(--white);
+    padding: 15px 35px;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.orcamento-text-content .btn:hover {
+    background-color: #003a6b; /* Azul mais escuro no hover */
+    transform: translateY(-2px);
+}
+
+.orcamento-image-container {
+    position: absolute;
+    right: 0; /* Alinha a imagem à direita */
+    bottom: 0; /* Alinha a base da imagem à base da seção */
+    width: 500px; /* Largura da imagem, ajuste conforme necessário */
+    height: auto;
+    z-index: 2; /* Garante que a imagem fique acima de tudo */
+}
+
+.orcamento-image-container img {
+    width: 100%;
+    height: auto;
+    display: block; /* Remove espaços extras na parte inferior */
+}
+
+/* Responsividade para a seção de orçamento */
+@media (max-width: 992px) {
+    .orcamento-section {
+        height: 400px; /* Ajusta a altura para telas menores */
+    }
+
+    .orcamento-text-content h2 {
+        font-size: 2.8rem;
+    }
+
+    .orcamento-text-content p {
+        font-size: 1rem;
+    }
+
+    .orcamento-image-container {
+        width: 400px; /* Reduz a largura da imagem */
+    }
+}
+
+@media (max-width: 768px) {
+    .orcamento-section {
+        height: auto; /* Altura flexível para acomodar o conteúdo empilhado */
+        padding: 60px 0; /* Adiciona padding vertical */
+        flex-direction: column; /* Empilha os elementos */
+        text-align: center;
+    }
+
+    .orcamento-background-top,
+    .orcamento-background-bottom {
+        height: 100%; /* Fundo total */
+        background-color: var(--primary-color); /* Fundo todo azul no mobile para simplificar */
+    }
+    
+    .orcamento-background-bottom {
+        display: none; /* Esconde o fundo amarelo no mobile */
+    }
+
+    .orcamento-content-wrapper {
+        flex-direction: column; /* Empilha o texto e a imagem */
+        text-align: center;
+        gap: 30px;
+        height: auto;
+    }
+
+    .orcamento-text-content {
+        max-width: 100%; /* Ocupa a largura total */
+        padding: 0 20px; /* Padding horizontal */
+    }
+
+    .orcamento-text-content h2 {
+        font-size: 2.5rem;
+        text-align: center;
+        color: var(--white);
+    }
+
+    .orcamento-text-content p {
+        color: var(--white);
+    }
+
+    .orcamento-image-container {
+        position: relative; /* Remove o posicionamento absoluto */
+        right: auto;
+        bottom: auto;
+        width: 300px; /* Largura menor para mobile */
+        margin: 0 auto; /* Centraliza a imagem */
+    }
+
+    .orcamento-text-content .btn {
+        margin-top: 20px;
+        display: inline-block;
+        width: auto;
     }
 }
