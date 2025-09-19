@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
     const navMenu = document.getElementById('nav-menu');
     const navToggle = document.getElementById('nav-toggle');
@@ -216,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function enviarCandidatura() {
     const form = document.getElementById('candidatura-form');
     const formData = new FormData(form);
-    const vaga = document.getElementById('vaga-titulo').textContent;
+    const vaga = document.getElementById('vaga-titulo').textContent.trim();
     
     // Validar campos obrigatórios
     const camposObrigatorios = ['nome', 'email', 'telefone', 'experiencia'];
@@ -253,7 +252,8 @@ function enviarCandidatura() {
     
     // Simular delay de envio
     setTimeout(() => {
-        alert(`Candidatura para ${vaga} enviada com sucesso! Entraremos em contato em breve.`);
+        // Mostrar mensagem de sucesso mais profissional
+        showSuccessMessage(`Candidatura para ${vaga} enviada com sucesso! Entraremos em contato em breve.`);
         fecharModalCandidatura();
         
         // Restaurar botão
@@ -266,6 +266,45 @@ function enviarCandidatura() {
             dados: Object.fromEntries(formData)
         });
     }, 2000);
+}
+
+// Função para mostrar mensagem de sucesso
+function showSuccessMessage(message) {
+    const notification = document.createElement('div');
+    notification.className = 'success-notification';
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-check-circle"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #28a745;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10000;
+        animation: slideInRight 0.3s ease-out;
+        max-width: 400px;
+        font-weight: 500;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Remover após 5 segundos
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease-out';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 5000);
 }
 
 // Máscara para telefone
@@ -324,3 +363,40 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(item);
     });
 });
+
+// Adicionar estilos para as animações de notificação
+const notificationStyles = document.createElement('style');
+notificationStyles.textContent = `
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOutRight {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+    
+    .success-notification .notification-content {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .success-notification i {
+        font-size: 18px;
+    }
+`;
+document.head.appendChild(notificationStyles);
