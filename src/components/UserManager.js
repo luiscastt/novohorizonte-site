@@ -1,84 +1,61 @@
 /**
- * Gerenciador de Usuário Universal
- * Compatível com qualquer ambiente de hospedagem
+ * Gerenciador de Usuário com Supabase Integrado
+ * Sistema completo de perfil e painel do usuário
  */
+
+import { supabase } from '../lib/supabase.js'
 
 export class UserManager {
   constructor() {
     this.currentUser = null
     this.userProfile = null
-    this.authSystem = null
+    this.applications = []
     this.init()
   }
 
   async init() {
-    // Detectar sistema de autenticação disponível
-    this.detectAuthSystem()
-    
-    // Verificar se há usuário logado
     await this.checkCurrentUser()
-    
-    // Configurar listeners de autenticação
     this.setupAuthListeners()
-    
-    // Atualizar interface
     this.updateUI()
   }
 
-  detectAuthSystem() {
-    if (window.supabase && typeof window.supabase.auth !== 'undefined') {
-      this.authSystem = 'supabase'
-      console.log('Sistema de autenticação: Supabase')
-    } else {
-      this.authSystem = 'local'
-      console.log('Sistema de autenticação: Local Storage')
-    }
-  }
-
   setupAuthListeners() {
-    if (this.authSystem === 'supabase') {
-      // Listener do Supabase
-      window.supabase.auth.onAuthStateChange((event, session) => {
+    if (supabase) {
+      supabase.auth.onAuthStateChange((event, session) => {
         if (event === 'SIGNED_IN') {
           this.handleUserSignIn(session.user)
         } else if (event === 'SIGNED_OUT') {
           this.handleUserSignOut()
         }
       })
-    } else {
-      // Listener customizado para sistema local
-      document.addEventListener('userAuthenticated', (e) => {
-        this.handleUserSignIn(e.detail.user)
-      })
-      
-      // Verificar mudanças no localStorage
-      window.addEventListener('storage', (e) => {
-        if (e.key === 'current_user') {
-          if (e.newValue) {
-            this.handleUserSignIn(JSON.parse(e.newValue))
-          } else {
-            this.handleUserSignOut()
-          }
-        }
-      })
     }
+
+    // Listeners customizados
+    document.addEventListener('userAuthenticated', (e) => {
+      this.handleUserSignIn(e.detail.user)
+    })
+    
+    document.addEventListener('userSignedOut', () => {
+      this.handleUserSignOut()
+    })
   }
 
   async checkCurrentUser() {
     try {
-      if (this.authSystem === 'supabase') {
-        const { data: { user }, error } = await window.supabase.auth.getUser()
+      if (supabase) {
+        const { data: { user }, error } = await supabase.auth.getUser()
         
         if (user && !error) {
           this.currentUser = user
           await this.loadUserProfile()
+          await this.loadUserApplications()
         }
       } else {
         // Sistema local
         const userData = localStorage.getItem('current_user')
         if (userData) {
           this.currentUser = JSON.parse(userData)
-          this.userProfile = this.currentUser // No sistema local, o perfil é o próprio usuário
+          this.userProfile = this.currentUser
         }
       }
     } catch (error) {
@@ -87,10 +64,10 @@ export class UserManager {
   }
 
   async loadUserProfile() {
-    if (!this.currentUser || this.authSystem !== 'supabase') return
+    if (!this.currentUser || !supabase) return
 
     try {
-      const { data, error } = await window.supabase
+      const { data, error } = await supabase
         .from('user_profiles')
         .select('*')
         .eq('id', this.currentUser.id)
@@ -98,46 +75,82 @@ export class UserManager {
       
       if (data && !error) {
         this.userProfile = data
+      } else if (error && error.code === 'PGRST116') {
+        // Perfil não existe, criar um novo
+        await this.createUserProfile()
       }
     } catch (error) {
       console.error('Erro ao carregar perfil:', error)
     }
   }
 
+  async createUserProfile() {
+    if (!this.currentUser || !supabase) return
+
+    try {
+      const profileData = {
+        id: this.currentUser.id,
+        email: this.currentUser.email,
+        full_name: this.currentUser.user_metadata?.full_name || '',
+        avatar_url: this.currentUser.user_metadata?.avatar_url || '',
+        provider: this.currentUser.app_metadata?.provider || 'email'
+      }
+
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .insert([profileData])
+        .select()
+        .single()
+      
+      if (data && !error) {
+        this.userProfile = data
+      }
+    } catch (error) {
+      console.error('Erro ao criar perfil:', error)
+    }
+  }
+
+  async loadUserApplications() {
+    if (!this.currentUser) return
+
+    try {
+      // Carregar do localStorage por enquanto
+      const applications = JSON.parse(localStorage.getItem(`applications_${this.currentUser.id}`) || '[]')
+      this.applications = applications
+    } catch (error) {
+      console.error('Erro ao carregar candidaturas:', error)
+    }
+  }
+
   async handleUserSignIn(user) {
     this.currentUser = user
     
-    if (this.authSystem === 'supabase') {
+    if (supabase) {
       await this.loadUserProfile()
+      await this.loadUserApplications()
     } else {
       this.userProfile = user
     }
     
     this.updateUI()
-    
-    // Disparar evento personalizado
-    const event = new CustomEvent('userStateChanged', {
-      detail: { user: this.currentUser, profile: this.userProfile }
-    })
-    document.dispatchEvent(event)
+    this.setupUserPanelListeners()
   }
 
   handleUserSignOut() {
     this.currentUser = null
     this.userProfile = null
+    this.applications = []
     
-    // Limpar localStorage se usando sistema local
-    if (this.authSystem === 'local') {
+    if (!supabase) {
       localStorage.removeItem('current_user')
     }
     
     this.updateUI()
     
-    // Disparar evento personalizado
-    const event = new CustomEvent('userStateChanged', {
-      detail: { user: null, profile: null }
-    })
-    document.dispatchEvent(event)
+    // Redirecionar para home se estiver no painel
+    if (window.location.hash === '#user-panel' || document.getElementById('user-panel-page')?.classList.contains('active')) {
+      this.showPage('home')
+    }
   }
 
   updateUI() {
@@ -145,7 +158,6 @@ export class UserManager {
     const userMenu = document.getElementById('user-menu')
     
     if (this.currentUser) {
-      // Usuário logado
       if (loginBtn) loginBtn.style.display = 'none'
       
       if (!userMenu) {
@@ -154,8 +166,7 @@ export class UserManager {
         this.updateUserMenu()
       }
     } else {
-      // Usuário não logado
-      if (loginBtn) loginBtn.style.display = 'inline-block'
+      if (loginBtn) loginBtn.style.display = 'inline-flex'
       if (userMenu) userMenu.remove()
     }
   }
@@ -167,87 +178,463 @@ export class UserManager {
     const userAvatar = this.getUserAvatar()
     
     const userMenuHTML = `
-      <li class="nav-item" id="user-menu">
-        <div class="user-dropdown">
-          <button class="user-btn" id="user-btn" type="button">
-            <img src="${userAvatar}" 
-                 alt="Avatar" class="user-avatar"
-                 onerror="this.src='https://via.placeholder.com/32/004a8d/ffffff?text=${userName.charAt(0).toUpperCase()}'">
-            <span class="user-name">${userName}</span>
-            <i class="fas fa-chevron-down"></i>
-          </button>
-          <div class="user-dropdown-menu" id="user-dropdown-menu">
-            <a href="#" class="dropdown-item" id="profile-link">
-              <i class="fas fa-user"></i> Meu Perfil
-            </a>
-            <a href="#" class="dropdown-item" id="settings-link">
-              <i class="fas fa-cog"></i> Configurações
-            </a>
-            <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item" id="logout-link">
-              <i class="fas fa-sign-out-alt"></i> Sair
-            </a>
-          </div>
+      <li class="nav-item dropdown" id="user-menu">
+        <a class="nav-link dropdown-toggle" href="#" id="user-dropdown-toggle">
+          <img src="${userAvatar}" 
+               alt="Avatar" class="user-avatar"
+               onerror="this.src='https://via.placeholder.com/32/004a8d/ffffff?text=${userName.charAt(0).toUpperCase()}'">
+          <span class="user-name">${userName}</span>
+          <i class="fas fa-chevron-down"></i>
+        </a>
+        <div class="dropdown-menu" id="user-dropdown-menu">
+          <a href="#" class="dropdown-item" id="user-panel-link">
+            <i class="fas fa-tachometer-alt"></i> Meu Painel
+          </a>
+          <a href="#" class="dropdown-item" id="profile-link">
+            <i class="fas fa-user"></i> Meu Perfil
+          </a>
+          <a href="#" class="dropdown-item" id="applications-link">
+            <i class="fas fa-briefcase"></i> Minhas Candidaturas
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item" id="logout-link">
+            <i class="fas fa-sign-out-alt"></i> Sair
+          </a>
         </div>
       </li>
     `
     
     navbar.insertAdjacentHTML('beforeend', userMenuHTML)
-    
-    // Adicionar event listeners
     this.attachUserMenuListeners()
   }
 
   attachUserMenuListeners() {
-    const userBtn = document.getElementById('user-btn')
-    const dropdown = document.getElementById('user-dropdown-menu')
-    const logoutLink = document.getElementById('logout-link')
+    const userPanelLink = document.getElementById('user-panel-link')
     const profileLink = document.getElementById('profile-link')
-    const settingsLink = document.getElementById('settings-link')
+    const applicationsLink = document.getElementById('applications-link')
+    const logoutLink = document.getElementById('logout-link')
     
-    // Toggle dropdown
-    userBtn.addEventListener('click', (e) => {
-      e.stopPropagation()
-      dropdown.classList.toggle('show')
-    })
-
-    // Fechar dropdown ao clicar fora
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.user-dropdown')) {
-        dropdown.classList.remove('show')
-      }
-    })
-
-    // Logout
-    logoutLink.addEventListener('click', async (e) => {
+    userPanelLink?.addEventListener('click', (e) => {
       e.preventDefault()
-      dropdown.classList.remove('show')
+      this.showUserPanel('dashboard')
+    })
+
+    profileLink?.addEventListener('click', (e) => {
+      e.preventDefault()
+      this.showUserPanel('profile')
+    })
+
+    applicationsLink?.addEventListener('click', (e) => {
+      e.preventDefault()
+      this.showUserPanel('applications')
+    })
+
+    logoutLink?.addEventListener('click', async (e) => {
+      e.preventDefault()
       await this.handleLogout()
     })
+  }
 
-    // Perfil
-    profileLink.addEventListener('click', (e) => {
-      e.preventDefault()
-      dropdown.classList.remove('show')
-      this.showProfileModal()
+  showUserPanel(section = 'dashboard') {
+    // Mostrar página do painel
+    this.showPage('user-panel')
+    
+    // Atualizar dados do painel
+    this.updateUserPanelData()
+    
+    // Mostrar seção específica
+    if (section) {
+      this.showPanelSection(section)
+    }
+  }
+
+  showPage(pageId) {
+    // Esconder todas as páginas
+    document.querySelectorAll('.page').forEach(page => {
+      page.classList.remove('active')
+    })
+    
+    // Mostrar página específica
+    const targetPage = document.getElementById(`${pageId}-page`)
+    if (targetPage) {
+      targetPage.classList.add('active')
+    }
+    
+    // Atualizar navegação
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.classList.remove('active')
+      if (link.dataset.page === pageId) {
+        link.classList.add('active')
+      }
+    })
+    
+    // Scroll para o topo
+    window.scrollTo(0, 0)
+  }
+
+  showPanelSection(sectionId) {
+    // Esconder todas as seções
+    document.querySelectorAll('.panel-section').forEach(section => {
+      section.classList.remove('active')
+    })
+    
+    // Mostrar seção específica
+    const targetSection = document.getElementById(`${sectionId}-panel`)
+    if (targetSection) {
+      targetSection.classList.add('active')
+    }
+    
+    // Atualizar navegação do painel
+    document.querySelectorAll('.panel-nav .nav-item').forEach(item => {
+      item.classList.remove('active')
+      if (item.dataset.panel === sectionId) {
+        item.classList.add('active')
+      }
+    })
+  }
+
+  setupUserPanelListeners() {
+    // Navegação do painel
+    document.querySelectorAll('.panel-nav .nav-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault()
+        const panel = e.currentTarget.dataset.panel
+        this.showPanelSection(panel)
+      })
     })
 
-    // Configurações
-    settingsLink.addEventListener('click', (e) => {
-      e.preventDefault()
-      dropdown.classList.remove('show')
-      this.showSettingsModal()
+    // Upload de avatar
+    const editAvatarBtn = document.getElementById('edit-avatar-btn')
+    const avatarUpload = document.getElementById('avatar-upload')
+    
+    editAvatarBtn?.addEventListener('click', () => {
+      avatarUpload.click()
     })
+    
+    avatarUpload?.addEventListener('change', (e) => {
+      this.handleAvatarUpload(e.target.files[0])
+    })
+
+    // Formulário de perfil
+    const profileForm = document.getElementById('profile-form')
+    profileForm?.addEventListener('submit', (e) => {
+      e.preventDefault()
+      this.handleProfileUpdate(e.target)
+    })
+
+    // Upload de currículo
+    const resumeFile = document.getElementById('resume-file')
+    const resumeUploadArea = document.getElementById('resume-upload-area')
+    const removeResume = document.getElementById('remove-resume')
+    
+    resumeUploadArea?.addEventListener('click', () => {
+      resumeFile.click()
+    })
+    
+    resumeFile?.addEventListener('change', (e) => {
+      this.handleResumeUpload(e.target.files[0])
+    })
+    
+    removeResume?.addEventListener('click', () => {
+      this.removeResume()
+    })
+  }
+
+  updateUserPanelData() {
+    if (!this.currentUser) return
+
+    // Atualizar informações do usuário
+    const userNameDisplay = document.getElementById('user-name-display')
+    const userEmailDisplay = document.getElementById('user-email-display')
+    const userAvatarDisplay = document.getElementById('user-avatar-display')
+    
+    if (userNameDisplay) userNameDisplay.textContent = this.getUserDisplayName()
+    if (userEmailDisplay) userEmailDisplay.textContent = this.currentUser.email
+    if (userAvatarDisplay) {
+      userAvatarDisplay.src = this.getUserAvatar()
+      userAvatarDisplay.onerror = () => {
+        userAvatarDisplay.src = `https://via.placeholder.com/80/004a8d/ffffff?text=${this.getUserDisplayName().charAt(0).toUpperCase()}`
+      }
+    }
+
+    // Atualizar estatísticas
+    const applicationsCount = document.getElementById('applications-count')
+    const profileViews = document.getElementById('profile-views')
+    const resumeStatus = document.getElementById('resume-status')
+    
+    if (applicationsCount) applicationsCount.textContent = this.applications.length
+    if (profileViews) profileViews.textContent = Math.floor(Math.random() * 50) + 10 // Simulado
+    if (resumeStatus) {
+      const hasResume = localStorage.getItem(`resume_${this.currentUser.id}`)
+      resumeStatus.textContent = hasResume ? 'Completo' : 'Incompleto'
+    }
+
+    // Preencher formulário de perfil
+    this.fillProfileForm()
+    
+    // Carregar candidaturas
+    this.loadApplicationsList()
+  }
+
+  fillProfileForm() {
+    if (!this.userProfile) return
+
+    const form = document.getElementById('profile-form')
+    if (!form) return
+
+    const fields = {
+      'profile-name': this.userProfile.full_name || '',
+      'profile-nickname': this.userProfile.nickname || '',
+      'profile-email': this.userProfile.email || '',
+      'profile-phone': this.userProfile.phone || '',
+      'profile-gender': this.userProfile.gender || '',
+      'profile-birthdate': this.userProfile.birth_date || '',
+      'profile-address': this.userProfile.address || ''
+    }
+
+    Object.entries(fields).forEach(([fieldId, value]) => {
+      const field = document.getElementById(fieldId)
+      if (field) field.value = value
+    })
+  }
+
+  loadApplicationsList() {
+    const applicationsList = document.getElementById('applications-list')
+    if (!applicationsList) return
+
+    if (this.applications.length === 0) {
+      applicationsList.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-briefcase"></i>
+          <h3>Nenhuma candidatura ainda</h3>
+          <p>Você ainda não se candidatou a nenhuma vaga. Explore nossas oportunidades!</p>
+          <a href="#" class="btn btn-primary" data-page="vagas">Ver Vagas Disponíveis</a>
+        </div>
+      `
+      return
+    }
+
+    const applicationsHTML = this.applications.map(app => `
+      <div class="application-card">
+        <div class="application-header">
+          <div>
+            <div class="application-title">${app.position}</div>
+            <div class="application-date">Candidatura enviada em ${new Date(app.date).toLocaleDateString('pt-BR')}</div>
+          </div>
+          <span class="application-status status-${app.status}">${this.getStatusText(app.status)}</span>
+        </div>
+        <div class="application-details">
+          <p><strong>Local:</strong> ${app.location || 'Serra - ES'}</p>
+          <p><strong>Tipo:</strong> ${app.type || 'CLT'}</p>
+          ${app.notes ? `<p><strong>Observações:</strong> ${app.notes}</p>` : ''}
+        </div>
+      </div>
+    `).join('')
+
+    applicationsList.innerHTML = applicationsHTML
+  }
+
+  getStatusText(status) {
+    const statusMap = {
+      'pending': 'Pendente',
+      'reviewing': 'Em Análise',
+      'approved': 'Aprovado',
+      'rejected': 'Rejeitado'
+    }
+    return statusMap[status] || 'Pendente'
+  }
+
+  async handleAvatarUpload(file) {
+    if (!file) return
+
+    // Validar arquivo
+    if (!file.type.startsWith('image/')) {
+      this.showNotification('Por favor, selecione uma imagem válida', 'error')
+      return
+    }
+
+    if (file.size > 5 * 1024 * 1024) { // 5MB
+      this.showNotification('A imagem deve ter no máximo 5MB', 'error')
+      return
+    }
+
+    try {
+      // Converter para base64 para armazenamento local
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const avatarUrl = e.target.result
+        
+        // Atualizar avatar na interface
+        const avatarDisplay = document.getElementById('user-avatar-display')
+        if (avatarDisplay) avatarDisplay.src = avatarUrl
+        
+        // Salvar no localStorage
+        localStorage.setItem(`avatar_${this.currentUser.id}`, avatarUrl)
+        
+        this.showNotification('Avatar atualizado com sucesso!', 'success')
+      }
+      reader.readAsDataURL(file)
+      
+    } catch (error) {
+      console.error('Erro ao fazer upload do avatar:', error)
+      this.showNotification('Erro ao atualizar avatar', 'error')
+    }
+  }
+
+  async handleProfileUpdate(form) {
+    const formData = new FormData(form)
+    const profileData = Object.fromEntries(formData)
+
+    try {
+      if (supabase && this.userProfile) {
+        // Atualizar no Supabase
+        const { data, error } = await supabase
+          .from('user_profiles')
+          .update({
+            full_name: profileData.full_name,
+            nickname: profileData.nickname,
+            phone: profileData.phone,
+            gender: profileData.gender,
+            birth_date: profileData.birth_date || null,
+            address: profileData.address,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', this.currentUser.id)
+          .select()
+          .single()
+        
+        if (error) throw error
+        
+        this.userProfile = data
+      } else {
+        // Atualizar localmente
+        this.userProfile = { ...this.userProfile, ...profileData }
+        localStorage.setItem('current_user', JSON.stringify(this.userProfile))
+      }
+      
+      this.updateUI()
+      this.showNotification('Perfil atualizado com sucesso!', 'success')
+      
+    } catch (error) {
+      console.error('Erro ao atualizar perfil:', error)
+      this.showNotification('Erro ao atualizar perfil', 'error')
+    }
+  }
+
+  async handleResumeUpload(file) {
+    if (!file) return
+
+    if (file.type !== 'application/pdf') {
+      this.showNotification('Por favor, selecione um arquivo PDF', 'error')
+      return
+    }
+
+    if (file.size > 10 * 1024 * 1024) { // 10MB
+      this.showNotification('O arquivo deve ter no máximo 10MB', 'error')
+      return
+    }
+
+    try {
+      // Salvar informações do arquivo
+      const resumeData = {
+        name: file.name,
+        size: file.size,
+        uploadDate: new Date().toISOString()
+      }
+      
+      localStorage.setItem(`resume_${this.currentUser.id}`, JSON.stringify(resumeData))
+      
+      // Mostrar preview
+      this.showResumePreview(resumeData)
+      
+      this.showNotification('Currículo enviado com sucesso!', 'success')
+      
+    } catch (error) {
+      console.error('Erro ao fazer upload do currículo:', error)
+      this.showNotification('Erro ao enviar currículo', 'error')
+    }
+  }
+
+  showResumePreview(resumeData) {
+    const uploadArea = document.getElementById('resume-upload-area')
+    const preview = document.getElementById('resume-preview')
+    const filename = document.getElementById('resume-filename')
+    const filesize = document.getElementById('resume-filesize')
+    
+    if (uploadArea) uploadArea.style.display = 'none'
+    if (preview) preview.style.display = 'block'
+    if (filename) filename.textContent = resumeData.name
+    if (filesize) filesize.textContent = this.formatFileSize(resumeData.size)
+  }
+
+  removeResume() {
+    localStorage.removeItem(`resume_${this.currentUser.id}`)
+    
+    const uploadArea = document.getElementById('resume-upload-area')
+    const preview = document.getElementById('resume-preview')
+    
+    if (uploadArea) uploadArea.style.display = 'block'
+    if (preview) preview.style.display = 'none'
+    
+    this.showNotification('Currículo removido', 'info')
+  }
+
+  formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes'
+    const k = 1024
+    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  }
+
+  async handleLogout() {
+    const confirmLogout = confirm('Tem certeza que deseja sair?')
+    if (!confirmLogout) return
+
+    try {
+      if (supabase) {
+        const { error } = await supabase.auth.signOut()
+        if (error) throw error
+      } else {
+        localStorage.removeItem('current_user')
+        this.handleUserSignOut()
+      }
+      
+      this.showNotification('Logout realizado com sucesso!', 'success')
+      
+      setTimeout(() => {
+        window.location.reload()
+      }, 1000)
+      
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error)
+      this.showNotification('Erro ao fazer logout', 'error')
+    }
+  }
+
+  // Métodos para candidaturas
+  addApplication(applicationData) {
+    const application = {
+      id: Date.now().toString(),
+      ...applicationData,
+      date: new Date().toISOString(),
+      status: 'pending'
+    }
+    
+    this.applications.push(application)
+    localStorage.setItem(`applications_${this.currentUser.id}`, JSON.stringify(this.applications))
+    
+    // Atualizar interface se estiver no painel
+    if (document.getElementById('applications-panel')?.classList.contains('active')) {
+      this.loadApplicationsList()
+    }
   }
 
   updateUserMenu() {
     const userName = document.querySelector('.user-name')
     const userAvatar = document.querySelector('.user-avatar')
     
-    if (userName) {
-      userName.textContent = this.getUserDisplayName()
-    }
-    
+    if (userName) userName.textContent = this.getUserDisplayName()
     if (userAvatar) {
       const avatarUrl = this.getUserAvatar()
       userAvatar.src = avatarUrl
@@ -270,76 +657,46 @@ export class UserManager {
   }
 
   getUserAvatar() {
+    // Verificar avatar local primeiro
+    const localAvatar = localStorage.getItem(`avatar_${this.currentUser?.id}`)
+    if (localAvatar) return localAvatar
+    
     if (this.userProfile?.avatar_url) {
       return this.userProfile.avatar_url
     } else if (this.currentUser?.user_metadata?.avatar_url) {
       return this.currentUser.user_metadata.avatar_url
     } else {
-      // Gerar avatar baseado no nome
       const name = this.getUserDisplayName()
       return `https://via.placeholder.com/32/004a8d/ffffff?text=${name.charAt(0).toUpperCase()}`
     }
   }
 
-  async handleLogout() {
-    try {
-      const confirmLogout = confirm('Tem certeza que deseja sair?')
-      if (!confirmLogout) return
-
-      if (this.authSystem === 'supabase') {
-        const { error } = await window.supabase.auth.signOut()
-        if (error) throw error
-      } else {
-        // Sistema local
-        localStorage.removeItem('current_user')
-        this.handleUserSignOut()
-      }
-      
-      // Mostrar mensagem de sucesso
-      this.showNotification('Logout realizado com sucesso!', 'success')
-      
-      // Recarregar página após um delay
-      setTimeout(() => {
-        window.location.reload()
-      }, 1000)
-      
-    } catch (error) {
-      console.error('Erro ao fazer logout:', error)
-      this.showNotification('Erro ao fazer logout. Tente novamente.', 'error')
-    }
-  }
-
-  showProfileModal() {
-    // Implementar modal de perfil
-    alert('Modal de perfil em desenvolvimento')
-  }
-
-  showSettingsModal() {
-    // Implementar modal de configurações
-    alert('Modal de configurações em desenvolvimento')
-  }
-
   showNotification(message, type = 'info') {
-    // Criar notificação temporária
     const notification = document.createElement('div')
     notification.className = `notification notification-${type}`
-    notification.textContent = message
+    notification.innerHTML = `
+      <div class="notification-content">
+        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+        <span>${message}</span>
+      </div>
+    `
     notification.style.cssText = `
       position: fixed;
       top: 20px;
       right: 20px;
-      padding: 15px 20px;
-      border-radius: 8px;
+      padding: 16px 20px;
+      border-radius: 12px;
       color: white;
       font-weight: 600;
       z-index: 10000;
       animation: slideInRight 0.3s ease-out;
+      max-width: 400px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
       background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#007bff'};
     `
     
     document.body.appendChild(notification)
     
-    // Remover após 3 segundos
     setTimeout(() => {
       notification.style.animation = 'slideOutRight 0.3s ease-out'
       setTimeout(() => {
@@ -347,10 +704,10 @@ export class UserManager {
           notification.parentNode.removeChild(notification)
         }
       }, 300)
-    }, 3000)
+    }, 4000)
   }
 
-  // Métodos públicos para outros componentes
+  // Métodos públicos
   isLoggedIn() {
     return !!this.currentUser
   }
@@ -371,36 +728,3 @@ export class UserManager {
     return this.currentUser?.email || null
   }
 }
-
-// Adicionar estilos para notificações
-const notificationStyles = document.createElement('style')
-notificationStyles.textContent = `
-  @keyframes slideInRight {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-  
-  @keyframes slideOutRight {
-    from {
-      transform: translateX(0);
-      opacity: 1;
-    }
-    to {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-  }
-  
-  .dropdown-divider {
-    height: 1px;
-    background: #eee;
-    margin: 8px 0;
-  }
-`
-document.head.appendChild(notificationStyles)

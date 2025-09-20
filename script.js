@@ -115,6 +115,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ===== FUNCIONALIDADES DA PÁGINA DE VAGAS =====
 
+// Dropdown de vagas no menu
+document.addEventListener('DOMContentLoaded', () => {
+    const vagasDropdown = document.getElementById('vagas-dropdown');
+    const vagasMenu = document.getElementById('vagas-menu');
+    
+    if (vagasDropdown && vagasMenu) {
+        // Adicionar comportamento de hover para desktop
+        vagasDropdown.parentElement.addEventListener('mouseenter', () => {
+            vagasMenu.classList.add('show');
+        });
+        
+        vagasDropdown.parentElement.addEventListener('mouseleave', () => {
+            vagasMenu.classList.remove('show');
+        });
+        
+        // Clique nos itens do dropdown
+        vagasMenu.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const category = item.dataset.category;
+                const page = item.dataset.page;
+                
+                if (page) {
+                    showPage(page);
+                } else if (category) {
+                    showPage('vagas');
+                    setTimeout(() => {
+                        filtrarVagas(category);
+                        // Atualizar botão ativo
+                        document.querySelectorAll('.filter-btn').forEach(btn => {
+                            btn.classList.toggle('active', btn.dataset.category === category);
+                        });
+                    }, 100);
+                }
+            });
+        });
+    }
+});
+
 // Filtros de categoria
 document.addEventListener('DOMContentLoaded', () => {
     const filterButtons = document.querySelectorAll('.filter-btn');
@@ -153,6 +192,59 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// Formulário de contato modernizado
+document.addEventListener('DOMContentLoaded', () => {
+    const contactForm = document.getElementById('contact-form');
+    
+    if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await enviarFormularioContato(contactForm);
+        });
+    }
+});
+
+async function enviarFormularioContato(form) {
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData);
+    
+    // Validação básica
+    if (!data.name || !data.email || !data.message) {
+        showNotification('Por favor, preencha todos os campos obrigatórios.', 'error');
+        return;
+    }
+    
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const btnText = submitBtn.querySelector('.btn-text');
+    const btnLoading = submitBtn.querySelector('.btn-loading');
+    
+    // Mostrar loading
+    btnText.style.display = 'none';
+    btnLoading.style.display = 'inline-flex';
+    submitBtn.disabled = true;
+    
+    try {
+        // Simular envio de email
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Aqui você integraria com um serviço de email como EmailJS ou backend
+        console.log('Dados do formulário:', data);
+        console.log('Enviando para: josean.castilho@novohorizonteconservadora.com.br');
+        
+        showNotification('Mensagem enviada com sucesso! Entraremos em contato em breve.', 'success');
+        form.reset();
+        
+    } catch (error) {
+        console.error('Erro ao enviar formulário:', error);
+        showNotification('Erro ao enviar mensagem. Tente novamente.', 'error');
+    } finally {
+        // Restaurar botão
+        btnText.style.display = 'inline-flex';
+        btnLoading.style.display = 'none';
+        submitBtn.disabled = false;
+    }
+}
+
 // ===== MODAL DE CANDIDATURA =====
 
 // Função para abrir o modal de candidatura
@@ -178,7 +270,7 @@ function fecharModalCandidatura() {
 // Event listeners para o modal
 document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('candidatura-modal');
-    const closeBtn = document.querySelector('.candidatura-close');
+    const closeBtn = document.getElementById('candidatura-close');
     const form = document.getElementById('candidatura-form');
     
     // Fechar modal ao clicar no X
@@ -209,13 +301,44 @@ document.addEventListener('DOMContentLoaded', () => {
             enviarCandidatura();
         });
     }
+    
+    // Upload de currículo
+    const curriculoUpload = document.getElementById('curriculo-upload');
+    const filePreview = document.getElementById('file-preview');
+    const fileName = document.getElementById('file-name');
+    const removeFile = document.getElementById('remove-file');
+    
+    if (curriculoUpload) {
+        curriculoUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.type === 'application/pdf') {
+                    fileName.textContent = file.name;
+                    filePreview.style.display = 'flex';
+                    document.querySelector('.upload-area').style.display = 'none';
+                } else {
+                    showNotification('Por favor, selecione um arquivo PDF.', 'error');
+                    e.target.value = '';
+                }
+            }
+        });
+    }
+    
+    if (removeFile) {
+        removeFile.addEventListener('click', () => {
+            curriculoUpload.value = '';
+            filePreview.style.display = 'none';
+            document.querySelector('.upload-area').style.display = 'block';
+        });
+    }
 });
 
 // Função para enviar candidatura
-function enviarCandidatura() {
+async function enviarCandidatura() {
     const form = document.getElementById('candidatura-form');
     const formData = new FormData(form);
     const vaga = document.getElementById('vaga-titulo').textContent.trim();
+    const curriculoFile = document.getElementById('curriculo-upload').files[0];
     
     // Validar campos obrigatórios
     const camposObrigatorios = ['nome', 'email', 'telefone', 'experiencia'];
@@ -244,37 +367,62 @@ function enviarCandidatura() {
     }
     
     // Simular envio (aqui você integraria com seu backend)
-    const submitBtn = document.querySelector('.candidatura-submit-btn');
-    const originalText = submitBtn.innerHTML;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const btnText = submitBtn.querySelector('.btn-text');
+    const btnLoading = submitBtn.querySelector('.btn-loading');
     
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+    // Mostrar loading
+    btnText.style.display = 'none';
+    btnLoading.style.display = 'inline-flex';
     submitBtn.disabled = true;
     
-    // Simular delay de envio
-    setTimeout(() => {
+    try {
+        // Simular envio
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Preparar dados para envio
+        const candidaturaData = {
+            vaga: vaga,
+            dados: Object.fromEntries(formData),
+            curriculo: curriculoFile ? curriculoFile.name : null,
+            dataEnvio: new Date().toISOString()
+        };
+        
+        console.log('Dados da candidatura:', candidaturaData);
+        console.log('Enviando para: vagas.sudesteconservadora@gmail.com');
+        
+        // Salvar candidatura no perfil do usuário (se logado)
+        if (window.userManager && window.userManager.isLoggedIn()) {
+            window.userManager.addApplication({
+                position: vaga,
+                location: 'Serra - ES',
+                type: 'CLT',
+                notes: candidaturaData.dados.observacoes || ''
+            });
+        }
+        
         // Mostrar mensagem de sucesso mais profissional
-        showSuccessMessage(`Candidatura para ${vaga} enviada com sucesso! Entraremos em contato em breve.`);
+        showNotification(`Candidatura para ${vaga} enviada com sucesso! Entraremos em contato em breve.`, 'success');
         fecharModalCandidatura();
         
+    } catch (error) {
+        console.error('Erro ao enviar candidatura:', error);
+        showNotification('Erro ao enviar candidatura. Tente novamente.', 'error');
+    } finally {
         // Restaurar botão
-        submitBtn.innerHTML = originalText;
+        btnText.style.display = 'inline-flex';
+        btnLoading.style.display = 'none';
         submitBtn.disabled = false;
-        
-        // Aqui você enviaria os dados para seu servidor
-        console.log('Dados da candidatura:', {
-            vaga: vaga,
-            dados: Object.fromEntries(formData)
-        });
-    }, 2000);
+    }
 }
 
-// Função para mostrar mensagem de sucesso
-function showSuccessMessage(message) {
+// Função universal para mostrar notificações
+function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
-    notification.className = 'success-notification';
+    notification.className = `notification notification-${type}`;
     notification.innerHTML = `
         <div class="notification-content">
-            <i class="fas fa-check-circle"></i>
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
             <span>${message}</span>
         </div>
     `;
@@ -283,20 +431,20 @@ function showSuccessMessage(message) {
         position: fixed;
         top: 20px;
         right: 20px;
-        background: #28a745;
+        padding: 16px 20px;
+        border-radius: 12px;
         color: white;
-        padding: 15px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        font-weight: 600;
         z-index: 10000;
         animation: slideInRight 0.3s ease-out;
         max-width: 400px;
-        font-weight: 500;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#007bff'};
     `;
     
     document.body.appendChild(notification);
     
-    // Remover após 5 segundos
+    // Remover após 4 segundos
     setTimeout(() => {
         notification.style.animation = 'slideOutRight 0.3s ease-out';
         setTimeout(() => {
@@ -304,7 +452,7 @@ function showSuccessMessage(message) {
                 notification.parentNode.removeChild(notification);
             }
         }, 300);
-    }, 5000);
+    }, 4000);
 }
 
 // Máscara para telefone
@@ -389,13 +537,13 @@ notificationStyles.textContent = `
         }
     }
     
-    .success-notification .notification-content {
+    .notification .notification-content {
         display: flex;
         align-items: center;
         gap: 10px;
     }
     
-    .success-notification i {
+    .notification i {
         font-size: 18px;
     }
 `;

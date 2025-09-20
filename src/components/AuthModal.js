@@ -1,7 +1,9 @@
 /**
- * Sistema de Autenticação Universal
- * Compatível com qualquer ambiente de hospedagem
+ * Sistema de Autenticação Modernizado com Supabase
+ * Integração completa com Google e LinkedIn
  */
+
+import { supabase } from '../lib/supabase.js'
 
 export class AuthModal {
   constructor() {
@@ -14,49 +16,45 @@ export class AuthModal {
   init() {
     this.createModal()
     this.attachEventListeners()
-    this.setupUniversalAuth()
+    this.setupSupabaseAuth()
   }
 
-  /**
-   * Configuração de autenticação universal
-   * Funciona independente do ambiente de hospedagem
-   */
-  setupUniversalAuth() {
-    // Detectar ambiente e configurar adequadamente
-    this.environment = this.detectEnvironment()
-    console.log('Ambiente detectado:', this.environment)
-  }
-
-  detectEnvironment() {
-    const hostname = window.location.hostname
-    
-    if (hostname.includes('bolt.host')) {
-      return 'bolt'
-    } else if (hostname.includes('localhost') || hostname.includes('127.0.0.1')) {
-      return 'local'
-    } else if (hostname.includes('netlify.app') || hostname.includes('vercel.app')) {
-      return 'static'
-    } else {
-      return 'production'
+  setupSupabaseAuth() {
+    if (!supabase) {
+      console.warn('Supabase não disponível, usando sistema local')
+      return
     }
+
+    // Listener para mudanças de autenticação
+    supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state changed:', event, session)
+      
+      if (event === 'SIGNED_IN') {
+        this.handleSuccessfulAuth(session.user)
+      } else if (event === 'SIGNED_OUT') {
+        this.handleSignOut()
+      }
+    })
   }
 
   createModal() {
     const modalHTML = `
-      <div id="auth-modal" class="auth-modal">
-        <div class="auth-modal-content">
-          <span class="auth-close">&times;</span>
+      <div id="auth-modal" class="modern-modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 id="auth-title">Entrar na sua conta</h2>
+            <button class="modal-close" id="auth-close">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
           
-          <div class="auth-header">
-            <h2 id="auth-title">Entrar</h2>
+          <div class="modal-body">
             <div class="auth-tabs">
               <button class="auth-tab active" data-mode="login">Entrar</button>
-              <button class="auth-tab" data-mode="register">Cadastrar</button>
+              <button class="auth-tab" data-mode="register">Criar Conta</button>
             </div>
-          </div>
 
-          <div class="auth-body">
-            <!-- Login com redes sociais -->
+            <!-- Login Social -->
             <div class="social-login">
               <button class="social-btn google-btn" id="google-login" type="button">
                 <i class="fab fa-google"></i>
@@ -69,36 +67,44 @@ export class AuthModal {
             </div>
 
             <div class="divider">
-              <span>ou</span>
+              <span>ou continue com e-mail</span>
             </div>
 
-            <!-- Formulário de login/registro -->
-            <form id="auth-form" class="auth-form" novalidate>
+            <!-- Formulário -->
+            <form id="auth-form" class="modern-form" novalidate>
               <div class="form-group" id="name-group" style="display: none;">
-                <input type="text" id="full-name" placeholder="Nome completo" autocomplete="name">
+                <label for="full-name">Nome completo</label>
+                <input type="text" id="full-name" name="full_name" placeholder="Digite seu nome completo">
+                <div class="error-message" id="name-error"></div>
               </div>
               
               <div class="form-group">
-                <input type="email" id="email" placeholder="E-mail" required autocomplete="email">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email" placeholder="Digite seu e-mail" required>
                 <div class="error-message" id="email-error"></div>
               </div>
               
               <div class="form-group">
-                <input type="password" id="password" placeholder="Senha" required autocomplete="current-password">
+                <label for="password">Senha</label>
+                <input type="password" id="password" name="password" placeholder="Digite sua senha" required>
                 <div class="error-message" id="password-error"></div>
               </div>
 
-              <button type="submit" class="auth-submit-btn" id="auth-submit">
-                <span class="btn-text">Entrar</span>
-                <span class="btn-loading" style="display: none;">
-                  <i class="fas fa-spinner fa-spin"></i> Processando...
+              <button type="submit" class="btn btn-primary btn-full" id="auth-submit">
+                <span class="btn-text">
+                  <i class="fas fa-sign-in-alt"></i>
+                  Entrar
+                </span>
+                <span class="btn-loading">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  Processando...
                 </span>
               </button>
             </form>
 
             <div class="auth-footer">
-              <p id="auth-switch">
-                Não tem uma conta? <a href="#" id="switch-mode">Cadastre-se</a>
+              <p id="auth-switch-text">
+                Não tem uma conta? <a href="#" id="switch-mode">Criar conta gratuita</a>
               </p>
             </div>
           </div>
@@ -112,10 +118,10 @@ export class AuthModal {
   }
 
   attachEventListeners() {
-    // Fechar modal
     const modal = document.getElementById('auth-modal')
-    const closeBtn = modal.querySelector('.auth-close')
+    const closeBtn = document.getElementById('auth-close')
     
+    // Fechar modal
     modal.addEventListener('click', (e) => {
       if (e.target === modal) {
         this.close()
@@ -133,7 +139,7 @@ export class AuthModal {
       }
     })
 
-    // Alternar entre login e registro
+    // Tabs
     document.querySelectorAll('.auth-tab').forEach(tab => {
       tab.addEventListener('click', (e) => {
         e.preventDefault()
@@ -142,7 +148,7 @@ export class AuthModal {
       })
     })
 
-    // Formulário de autenticação
+    // Formulário
     const form = document.getElementById('auth-form')
     form.addEventListener('submit', (e) => {
       e.preventDefault()
@@ -152,7 +158,7 @@ export class AuthModal {
     // Validação em tempo real
     this.setupRealTimeValidation()
 
-    // Login social (simulado para compatibilidade universal)
+    // Login social
     document.getElementById('google-login').addEventListener('click', (e) => {
       e.preventDefault()
       this.handleSocialLogin('google')
@@ -160,13 +166,14 @@ export class AuthModal {
 
     document.getElementById('linkedin-login').addEventListener('click', (e) => {
       e.preventDefault()
-      this.handleSocialLogin('linkedin')
+      this.handleSocialLogin('linkedin_oidc')
     })
   }
 
   setupRealTimeValidation() {
     const emailInput = document.getElementById('email')
     const passwordInput = document.getElementById('password')
+    const nameInput = document.getElementById('full-name')
     
     emailInput.addEventListener('blur', () => {
       this.validateEmail(emailInput.value)
@@ -175,44 +182,77 @@ export class AuthModal {
     passwordInput.addEventListener('blur', () => {
       this.validatePassword(passwordInput.value)
     })
+
+    nameInput.addEventListener('blur', () => {
+      if (this.currentMode === 'register') {
+        this.validateName(nameInput.value)
+      }
+    })
     
     // Limpar erros ao digitar
     emailInput.addEventListener('input', () => {
       this.clearError('email-error')
+      emailInput.classList.remove('error')
     })
     
     passwordInput.addEventListener('input', () => {
       this.clearError('password-error')
+      passwordInput.classList.remove('error')
+    })
+
+    nameInput.addEventListener('input', () => {
+      this.clearError('name-error')
+      nameInput.classList.remove('error')
     })
   }
 
   validateEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    const errorElement = document.getElementById('email-error')
+    const input = document.getElementById('email')
     
     if (!email) {
       this.showFieldError('email-error', 'E-mail é obrigatório')
+      input.classList.add('error')
       return false
     } else if (!emailRegex.test(email)) {
       this.showFieldError('email-error', 'E-mail inválido')
+      input.classList.add('error')
       return false
     } else {
       this.clearError('email-error')
+      input.classList.remove('error')
       return true
     }
   }
 
   validatePassword(password) {
-    const errorElement = document.getElementById('password-error')
+    const input = document.getElementById('password')
     
     if (!password) {
       this.showFieldError('password-error', 'Senha é obrigatória')
+      input.classList.add('error')
       return false
     } else if (password.length < 6) {
       this.showFieldError('password-error', 'Senha deve ter pelo menos 6 caracteres')
+      input.classList.add('error')
       return false
     } else {
       this.clearError('password-error')
+      input.classList.remove('error')
+      return true
+    }
+  }
+
+  validateName(name) {
+    const input = document.getElementById('full-name')
+    
+    if (!name || name.trim().length < 2) {
+      this.showFieldError('name-error', 'Nome deve ter pelo menos 2 caracteres')
+      input.classList.add('error')
+      return false
+    } else {
+      this.clearError('name-error')
+      input.classList.remove('error')
       return true
     }
   }
@@ -232,7 +272,7 @@ export class AuthModal {
   open(mode = 'login') {
     this.currentMode = mode
     this.switchMode(mode)
-    document.getElementById('auth-modal').style.display = 'block'
+    document.getElementById('auth-modal').style.display = 'flex'
     document.body.style.overflow = 'hidden'
     this.isOpen = true
     
@@ -264,21 +304,21 @@ export class AuthModal {
     const nameGroup = document.getElementById('name-group')
     const title = document.getElementById('auth-title')
     const submitBtn = document.getElementById('auth-submit')
-    const switchText = document.getElementById('auth-switch')
+    const switchText = document.getElementById('auth-switch-text')
     
     if (mode === 'login') {
-      title.textContent = 'Entrar'
-      submitBtn.querySelector('.btn-text').textContent = 'Entrar'
+      title.textContent = 'Entrar na sua conta'
+      submitBtn.querySelector('.btn-text').innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar'
       nameGroup.style.display = 'none'
-      switchText.innerHTML = 'Não tem uma conta? <a href="#" id="switch-mode">Cadastre-se</a>'
+      switchText.innerHTML = 'Não tem uma conta? <a href="#" id="switch-mode">Criar conta gratuita</a>'
     } else {
-      title.textContent = 'Cadastrar'
-      submitBtn.querySelector('.btn-text').textContent = 'Cadastrar'
+      title.textContent = 'Criar sua conta'
+      submitBtn.querySelector('.btn-text').innerHTML = '<i class="fas fa-user-plus"></i> Criar Conta'
       nameGroup.style.display = 'block'
-      switchText.innerHTML = 'Já tem uma conta? <a href="#" id="switch-mode">Entre</a>'
+      switchText.innerHTML = 'Já tem uma conta? <a href="#" id="switch-mode">Fazer login</a>'
     }
 
-    // Reattach event listener para o novo link
+    // Reattach event listener
     const switchLink = document.getElementById('switch-mode')
     switchLink.addEventListener('click', (e) => {
       e.preventDefault()
@@ -304,8 +344,7 @@ export class AuthModal {
     if (!this.validateEmail(email)) isValid = false
     if (!this.validatePassword(password)) isValid = false
     
-    if (this.currentMode === 'register' && !fullName) {
-      this.showMessage('Nome completo é obrigatório', 'error')
+    if (this.currentMode === 'register' && !this.validateName(fullName)) {
       isValid = false
     }
     
@@ -325,10 +364,18 @@ export class AuthModal {
 
       if (result.success) {
         this.showMessage(result.message, 'success')
-        setTimeout(() => {
-          this.close()
-          this.handleSuccessfulAuth(result.user)
-        }, 1500)
+        
+        if (this.currentMode === 'login') {
+          setTimeout(() => {
+            this.close()
+            this.handleSuccessfulAuth(result.user)
+          }, 1500)
+        } else {
+          // Para registro, mostrar mensagem por mais tempo
+          setTimeout(() => {
+            this.close()
+          }, 3000)
+        }
       } else {
         this.showMessage(result.message, 'error')
       }
@@ -340,81 +387,109 @@ export class AuthModal {
     }
   }
 
-  /**
-   * Autenticação universal - funciona em qualquer ambiente
-   */
   async performLogin(email, password) {
-    // Simular delay de rede
-    await this.delay(1000)
-    
-    // Verificar se há integração com Supabase disponível
-    if (window.supabase && typeof window.supabase.auth !== 'undefined') {
-      try {
-        const { data, error } = await window.supabase.auth.signInWithPassword({
-          email,
-          password,
-        })
-        
-        if (error) {
-          return {
-            success: false,
-            message: this.getErrorMessage(error)
-          }
-        }
-        
+    if (!supabase) {
+      return this.performLocalAuth(email, password, 'login')
+    }
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+      
+      if (error) {
         return {
-          success: true,
-          message: 'Login realizado com sucesso!',
-          user: data.user
+          success: false,
+          message: this.getErrorMessage(error)
         }
-      } catch (error) {
-        console.warn('Supabase não disponível, usando autenticação local')
+      }
+      
+      return {
+        success: true,
+        message: 'Login realizado com sucesso!',
+        user: data.user
+      }
+    } catch (error) {
+      console.error('Erro no login:', error)
+      return {
+        success: false,
+        message: 'Erro ao fazer login. Tente novamente.'
       }
     }
-    
-    // Fallback: autenticação local/simulada
-    return this.performLocalAuth(email, password, 'login')
   }
 
   async performRegister(email, password, fullName) {
-    await this.delay(1000)
-    
-    if (window.supabase && typeof window.supabase.auth !== 'undefined') {
-      try {
-        const { data, error } = await window.supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              full_name: fullName,
-            }
-          }
-        })
-        
-        if (error) {
-          return {
-            success: false,
-            message: this.getErrorMessage(error)
+    if (!supabase) {
+      return this.performLocalAuth(email, password, 'register', fullName)
+    }
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
           }
         }
-        
+      })
+      
+      if (error) {
         return {
-          success: true,
-          message: 'Conta criada com sucesso! Verifique seu e-mail.',
-          user: data.user
+          success: false,
+          message: this.getErrorMessage(error)
         }
-      } catch (error) {
-        console.warn('Supabase não disponível, usando registro local')
+      }
+      
+      return {
+        success: true,
+        message: 'Conta criada com sucesso! Você já pode fazer login.',
+        user: data.user
+      }
+    } catch (error) {
+      console.error('Erro no registro:', error)
+      return {
+        success: false,
+        message: 'Erro ao criar conta. Tente novamente.'
       }
     }
-    
-    return this.performLocalAuth(email, password, 'register', fullName)
   }
 
-  /**
-   * Sistema de autenticação local para compatibilidade universal
-   */
+  async handleSocialLogin(provider) {
+    if (!supabase) {
+      this.showMessage('Login social não disponível no momento', 'error')
+      return
+    }
+
+    this.setLoading(true)
+    this.showMessage('Redirecionando...', 'info')
+    
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`
+        }
+      })
+      
+      if (error) {
+        throw error
+      }
+      
+      // O redirecionamento acontecerá automaticamente
+      
+    } catch (error) {
+      console.error('Erro no login social:', error)
+      this.showMessage(`Erro ao conectar com ${provider === 'google' ? 'Google' : 'LinkedIn'}`, 'error')
+      this.setLoading(false)
+    }
+  }
+
+  // Sistema local para fallback
   async performLocalAuth(email, password, mode, fullName = null) {
+    await this.delay(1000) // Simular delay de rede
+    
     const users = JSON.parse(localStorage.getItem('app_users') || '[]')
     
     if (mode === 'login') {
@@ -434,7 +509,6 @@ export class AuthModal {
         }
       }
     } else {
-      // Verificar se usuário já existe
       const existingUser = users.find(u => u.email === email)
       
       if (existingUser) {
@@ -444,12 +518,11 @@ export class AuthModal {
         }
       }
       
-      // Criar novo usuário
       const newUser = {
         id: Date.now().toString(),
         email,
         password,
-        full_name: fullName,
+        user_metadata: { full_name: fullName },
         created_at: new Date().toISOString()
       }
       
@@ -465,40 +538,8 @@ export class AuthModal {
     }
   }
 
-  async handleSocialLogin(provider) {
-    this.setLoading(true)
-    this.showMessage('Redirecionando...', 'info')
-    
-    try {
-      // Tentar Supabase primeiro
-      if (window.supabase && typeof window.supabase.auth !== 'undefined') {
-        const { data, error } = await window.supabase.auth.signInWithOAuth({
-          provider: provider === 'linkedin' ? 'linkedin_oidc' : provider,
-          options: {
-            redirectTo: `${window.location.origin}/auth/callback`
-          }
-        })
-        
-        if (error) {
-          throw error
-        }
-        return
-      }
-      
-      // Fallback: simular login social
-      await this.delay(1500)
-      this.showMessage(`Login com ${provider} não disponível no momento`, 'error')
-      
-    } catch (error) {
-      console.error('Erro no login social:', error)
-      this.showMessage(`Erro ao conectar com ${provider}`, 'error')
-    } finally {
-      this.setLoading(false)
-    }
-  }
-
   handleSuccessfulAuth(user) {
-    // Disparar evento customizado para outros componentes
+    // Disparar evento customizado
     const event = new CustomEvent('userAuthenticated', {
       detail: { user }
     })
@@ -508,6 +549,12 @@ export class AuthModal {
     setTimeout(() => {
       window.location.reload()
     }, 500)
+  }
+
+  handleSignOut() {
+    // Disparar evento de logout
+    const event = new CustomEvent('userSignedOut')
+    document.dispatchEvent(event)
   }
 
   setLoading(loading) {
@@ -521,7 +568,7 @@ export class AuthModal {
       btnLoading.style.display = 'inline-flex'
       submitBtn.disabled = true
     } else {
-      btnText.style.display = 'inline'
+      btnText.style.display = 'inline-flex'
       btnLoading.style.display = 'none'
       submitBtn.disabled = false
     }
@@ -543,12 +590,17 @@ export class AuthModal {
 
   clearForm() {
     document.getElementById('auth-form').reset()
+    this.clearAllErrors()
   }
 
   clearAllErrors() {
     document.querySelectorAll('.error-message').forEach(el => {
       el.textContent = ''
       el.style.display = 'none'
+    })
+    
+    document.querySelectorAll('.form-group input').forEach(input => {
+      input.classList.remove('error')
     })
   }
 
@@ -559,7 +611,9 @@ export class AuthModal {
       'Password should be at least 6 characters': 'A senha deve ter pelo menos 6 caracteres',
       'Invalid email': 'E-mail inválido',
       'Email not confirmed': 'E-mail não confirmado. Verifique sua caixa de entrada.',
-      'signup_disabled': 'Cadastro temporariamente desabilitado'
+      'signup_disabled': 'Cadastro temporariamente desabilitado',
+      'Email rate limit exceeded': 'Muitas tentativas. Tente novamente em alguns minutos.',
+      'Signup requires a valid password': 'Senha inválida'
     }
     
     return errorMessages[error.message] || error.message || 'Erro desconhecido'
