@@ -120,31 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Dropdown de vagas no menu (simplificado)
 document.addEventListener('DOMContentLoaded', () => {
-    const trabalheConoscoDropdown = document.getElementById('trabalhe-conosco-dropdown');
-    const trabalheConoscoMenu = document.getElementById('trabalhe-conosco-menu');
-    
-    if (trabalheConoscoDropdown && trabalheConoscoMenu) {
-        // Adicionar comportamento de hover para desktop
-        trabalheConoscoDropdown.parentElement.addEventListener('mouseenter', () => {
-            trabalheConoscoMenu.classList.add('show');
-        });
-        
-        trabalheConoscoDropdown.parentElement.addEventListener('mouseleave', () => {
-            trabalheConoscoMenu.classList.remove('show');
-        });
-        
-        // Clique nos itens do dropdown
-        trabalheConoscoMenu.querySelectorAll('.dropdown-item').forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
-                const page = item.dataset.page;
-                
-                if (page && typeof window.showPage === 'function') {
-                    window.showPage(page);
-                }
-            });
-        });
-    }
+    // Dropdown removido - "Trabalhe Conosco" agora é um link direto para vagas
+    console.log('Menu "Trabalhe Conosco" configurado como link direto');
 });
 
 // Filtros de categoria

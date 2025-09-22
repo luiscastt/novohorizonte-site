@@ -313,6 +313,7 @@ section {
     font-weight: 800;
     margin-bottom: 24px;
     line-height: 1.1;
+    color: white; /* Garantir que "Excelência em" e "de Serviços" sejam brancos */
 }
 
 .highlight {
@@ -326,7 +327,7 @@ section {
     font-size: var(--font-size-lg);
     margin-bottom: 32px;
     opacity: 0.9;
-    color: var(--text-white);
+    color: white; /* Garantir cor branca para todo o texto do hero */
 }
 
 .hero-buttons {
