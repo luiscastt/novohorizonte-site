@@ -1,5 +1,5 @@
 /**
- * Gerenciador de Usuário Local Simplificado
+ * Gerenciador de Usuário Local Completo
  * Sistema completo de perfil e painel do usuário
  */
 
@@ -30,61 +30,14 @@ export class UserManager {
 
   async checkCurrentUser() {
     try {
-      // Sistema local apenas
       const userData = localStorage.getItem('current_user')
       if (userData) {
         this.currentUser = JSON.parse(userData)
         this.userProfile = this.currentUser
+        await this.loadUserApplications()
       }
     } catch (error) {
       console.error('Erro ao verificar usuário atual:', error)
-    }
-  }
-
-  async loadUserProfile() {
-    if (!this.currentUser || !supabase) return
-
-    try {
-      const { data, error } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('id', this.currentUser.id)
-        .single()
-      
-      if (data && !error) {
-        this.userProfile = data
-      } else if (error && error.code === 'PGRST116') {
-        // Perfil não existe, criar um novo
-        await this.createUserProfile()
-      }
-    } catch (error) {
-      console.error('Erro ao carregar perfil:', error)
-    }
-  }
-
-  async createUserProfile() {
-    if (!this.currentUser || !supabase) return
-
-    try {
-      const profileData = {
-        id: this.currentUser.id,
-        email: this.currentUser.email,
-        full_name: this.currentUser.user_metadata?.full_name || '',
-        avatar_url: this.currentUser.user_metadata?.avatar_url || '',
-        provider: this.currentUser.app_metadata?.provider || 'email'
-      }
-
-      const { data, error } = await supabase
-        .from('user_profiles')
-        .insert([profileData])
-        .select()
-        .single()
-      
-      if (data && !error) {
-        this.userProfile = data
-      }
-    } catch (error) {
-      console.error('Erro ao criar perfil:', error)
     }
   }
 
@@ -92,7 +45,6 @@ export class UserManager {
     if (!this.currentUser) return
 
     try {
-      // Carregar do localStorage por enquanto
       const applications = JSON.parse(localStorage.getItem(`applications_${this.currentUser.id}`) || '[]')
       this.applications = applications
     } catch (error) {
@@ -102,14 +54,8 @@ export class UserManager {
 
   async handleUserSignIn(user) {
     this.currentUser = user
-    
-    if (supabase) {
-      await this.loadUserProfile()
-      await this.loadUserApplications()
-    } else {
-      this.userProfile = user
-    }
-    
+    this.userProfile = user
+    await this.loadUserApplications()
     this.updateUI()
     this.setupUserPanelListeners()
   }
@@ -118,11 +64,7 @@ export class UserManager {
     this.currentUser = null
     this.userProfile = null
     this.applications = []
-    
-    if (!supabase) {
-      localStorage.removeItem('current_user')
-    }
-    
+    localStorage.removeItem('current_user')
     this.updateUI()
     
     // Redirecionar para home se estiver no painel
@@ -160,7 +102,7 @@ export class UserManager {
         <a class="nav-link dropdown-toggle" href="#" id="user-dropdown-toggle">
           <img src="${userAvatar}" 
                alt="Avatar" class="user-avatar"
-               onerror="this.src='https://via.placeholder.com/32/004a8d/ffffff?text=${userName.charAt(0).toUpperCase()}'">
+               onerror="this.src='https://via.placeholder.com/32/1e3a8a/ffffff?text=${userName.charAt(0).toUpperCase()}'">
           <span class="user-name">${userName}</span>
           <i class="fas fa-chevron-down"></i>
         </a>
@@ -331,7 +273,7 @@ export class UserManager {
     if (userAvatarDisplay) {
       userAvatarDisplay.src = this.getUserAvatar()
       userAvatarDisplay.onerror = () => {
-        userAvatarDisplay.src = `https://via.placeholder.com/80/004a8d/ffffff?text=${this.getUserDisplayName().charAt(0).toUpperCase()}`
+        userAvatarDisplay.src = `https://via.placeholder.com/80/1e3a8a/ffffff?text=${this.getUserDisplayName().charAt(0).toUpperCase()}`
       }
     }
 
@@ -361,7 +303,7 @@ export class UserManager {
     if (!form) return
 
     const fields = {
-      'profile-name': this.userProfile.full_name || '',
+      'profile-name': this.userProfile.user_metadata?.full_name || '',
       'profile-nickname': this.userProfile.nickname || '',
       'profile-email': this.userProfile.email || '',
       'profile-phone': this.userProfile.phone || '',
@@ -389,6 +331,16 @@ export class UserManager {
           <a href="#" class="btn btn-primary" data-page="vagas">Ver Vagas Disponíveis</a>
         </div>
       `
+      
+      // Adicionar listener para o botão
+      const vagasBtn = applicationsList.querySelector('[data-page="vagas"]')
+      if (vagasBtn) {
+        vagasBtn.addEventListener('click', (e) => {
+          e.preventDefault()
+          this.showPage('vagas')
+        })
+      }
+      
       return
     }
 
@@ -446,6 +398,10 @@ export class UserManager {
         const avatarDisplay = document.getElementById('user-avatar-display')
         if (avatarDisplay) avatarDisplay.src = avatarUrl
         
+        // Atualizar avatar no menu também
+        const menuAvatar = document.querySelector('.user-avatar')
+        if (menuAvatar) menuAvatar.src = avatarUrl
+        
         // Salvar no localStorage
         localStorage.setItem(`avatar_${this.currentUser.id}`, avatarUrl)
         
@@ -464,31 +420,12 @@ export class UserManager {
     const profileData = Object.fromEntries(formData)
 
     try {
-      if (supabase && this.userProfile) {
-        // Atualizar no Supabase
-        const { data, error } = await supabase
-          .from('user_profiles')
-          .update({
-            full_name: profileData.full_name,
-            nickname: profileData.nickname,
-            phone: profileData.phone,
-            gender: profileData.gender,
-            birth_date: profileData.birth_date || null,
-            address: profileData.address,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', this.currentUser.id)
-          .select()
-          .single()
-        
-        if (error) throw error
-        
-        this.userProfile = data
-      } else {
-        // Atualizar localmente
-        this.userProfile = { ...this.userProfile, ...profileData }
-        localStorage.setItem('current_user', JSON.stringify(this.userProfile))
-      }
+      // Atualizar dados do usuário
+      this.userProfile = { ...this.userProfile, ...profileData }
+      this.currentUser = { ...this.currentUser, ...profileData }
+      
+      // Salvar no localStorage
+      localStorage.setItem('current_user', JSON.stringify(this.currentUser))
       
       this.updateUI()
       this.showNotification('Perfil atualizado com sucesso!', 'success')
@@ -527,6 +464,10 @@ export class UserManager {
       
       this.showNotification('Currículo enviado com sucesso!', 'success')
       
+      // Atualizar status no dashboard
+      const resumeStatus = document.getElementById('resume-status')
+      if (resumeStatus) resumeStatus.textContent = 'Completo'
+      
     } catch (error) {
       console.error('Erro ao fazer upload do currículo:', error)
       this.showNotification('Erro ao enviar currículo', 'error')
@@ -554,6 +495,10 @@ export class UserManager {
     if (uploadArea) uploadArea.style.display = 'block'
     if (preview) preview.style.display = 'none'
     
+    // Atualizar status no dashboard
+    const resumeStatus = document.getElementById('resume-status')
+    if (resumeStatus) resumeStatus.textContent = 'Incompleto'
+    
     this.showNotification('Currículo removido', 'info')
   }
 
@@ -570,14 +515,8 @@ export class UserManager {
     if (!confirmLogout) return
 
     try {
-      if (supabase) {
-        const { error } = await supabase.auth.signOut()
-        if (error) throw error
-      } else {
-        localStorage.removeItem('current_user')
-        this.handleUserSignOut()
-      }
-      
+      localStorage.removeItem('current_user')
+      this.handleUserSignOut()
       this.showNotification('Logout realizado com sucesso!', 'success')
       
       setTimeout(() => {
@@ -606,6 +545,10 @@ export class UserManager {
     if (document.getElementById('applications-panel')?.classList.contains('active')) {
       this.loadApplicationsList()
     }
+    
+    // Atualizar contador no dashboard
+    const applicationsCount = document.getElementById('applications-count')
+    if (applicationsCount) applicationsCount.textContent = this.applications.length
   }
 
   updateUserMenu() {
@@ -617,14 +560,14 @@ export class UserManager {
       const avatarUrl = this.getUserAvatar()
       userAvatar.src = avatarUrl
       userAvatar.onerror = () => {
-        userAvatar.src = `https://via.placeholder.com/32/004a8d/ffffff?text=${this.getUserDisplayName().charAt(0).toUpperCase()}`
+        userAvatar.src = `https://via.placeholder.com/32/1e3a8a/ffffff?text=${this.getUserDisplayName().charAt(0).toUpperCase()}`
       }
     }
   }
 
   getUserDisplayName() {
-    if (this.userProfile?.full_name) {
-      return this.userProfile.full_name
+    if (this.userProfile?.user_metadata?.full_name) {
+      return this.userProfile.user_metadata.full_name
     } else if (this.currentUser?.user_metadata?.full_name) {
       return this.currentUser.user_metadata.full_name
     } else if (this.currentUser?.email) {
@@ -639,13 +582,13 @@ export class UserManager {
     const localAvatar = localStorage.getItem(`avatar_${this.currentUser?.id}`)
     if (localAvatar) return localAvatar
     
-    if (this.userProfile?.avatar_url) {
-      return this.userProfile.avatar_url
+    if (this.userProfile?.user_metadata?.avatar_url) {
+      return this.userProfile.user_metadata.avatar_url
     } else if (this.currentUser?.user_metadata?.avatar_url) {
       return this.currentUser.user_metadata.avatar_url
     } else {
       const name = this.getUserDisplayName()
-      return `https://via.placeholder.com/32/004a8d/ffffff?text=${name.charAt(0).toUpperCase()}`
+      return `https://via.placeholder.com/32/1e3a8a/ffffff?text=${name.charAt(0).toUpperCase()}`
     }
   }
 
@@ -670,7 +613,7 @@ export class UserManager {
       animation: slideInRight 0.3s ease-out;
       max-width: 400px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-      background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#007bff'};
+      background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#06b6d4'};
     `
     
     document.body.appendChild(notification)

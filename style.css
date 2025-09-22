@@ -1,37 +1,37 @@
-/* Variáveis CSS Modernizadas */
+/* Variáveis CSS Modernizadas - Tema Claro */
 :root {
-    --primary-color: #004a8d;
-    --primary-light: #1a5fa0;
-    --primary-dark: #003366;
-    --secondary-color: #007bff;
-    --accent-color: #ffc107;
-    --accent-light: #ffd54f;
-    --success-color: #28a745;
-    --warning-color: #ffc107;
-    --error-color: #dc3545;
-    --info-color: #17a2b8;
+    --primary-color: #1e3a8a; /* Azul escuro para menu */
+    --primary-light: #3b82f6;
+    --primary-dark: #1e40af;
+    --secondary-color: #2563eb;
+    --accent-color: #fbbf24; /* Amarelo para seção de orçamento */
+    --accent-light: #fcd34d;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --error-color: #ef4444;
+    --info-color: #06b6d4;
     
-    --text-primary: #1a1a1a;
-    --text-secondary: #6c757d;
-    --text-light: #8e8e93;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --text-light: #9ca3af;
     --text-white: #ffffff;
     
     --bg-primary: #ffffff;
-    --bg-secondary: #f8f9fa;
-    --bg-light: #f5f7fa;
-    --bg-dark: #1a1a1a;
+    --bg-secondary: #f9fafb;
+    --bg-light: #f3f4f6;
+    --bg-dark: #111827; /* Apenas para rodapé */
     
-    --border-color: #e9ecef;
-    --border-light: #f1f3f4;
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
-    --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.16);
+    --border-color: #e5e7eb;
+    --border-light: #f3f4f6;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     
     --radius-sm: 6px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-xl: 24px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
     
     --transition-fast: 0.15s ease;
     --transition-normal: 0.3s ease;
@@ -70,13 +70,14 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     padding-top: 80px;
+    overflow-x: hidden;
 }
 
-/* Container */
+/* Container responsivo */
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 0 20px;
 }
 
 /* Tipografia */
@@ -84,11 +85,12 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
     line-height: 1.2;
     margin-bottom: 1rem;
+    color: var(--text-primary);
 }
 
-h1 { font-size: var(--font-size-5xl); }
-h2 { font-size: var(--font-size-4xl); }
-h3 { font-size: var(--font-size-3xl); }
+h1 { font-size: clamp(2rem, 5vw, var(--font-size-5xl)); }
+h2 { font-size: clamp(1.75rem, 4vw, var(--font-size-4xl)); }
+h3 { font-size: clamp(1.5rem, 3vw, var(--font-size-3xl)); }
 h4 { font-size: var(--font-size-2xl); }
 h5 { font-size: var(--font-size-xl); }
 h6 { font-size: var(--font-size-lg); }
@@ -96,6 +98,7 @@ h6 { font-size: var(--font-size-lg); }
 p {
     margin-bottom: 1rem;
     color: var(--text-secondary);
+    line-height: 1.7;
 }
 
 /* Seções */
@@ -139,19 +142,16 @@ section {
     display: block;
 }
 
-/* Header Modernizado */
+/* Header com azul escuro */
 .header {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    background: #ffffff;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 2px solid var(--primary-color);
+    background: var(--primary-color);
     z-index: 1000;
     transition: var(--transition-normal);
-    box-shadow: 0 2px 10px rgba(0, 74, 141, 0.1);
+    box-shadow: var(--shadow-lg);
 }
 
 .navbar {
@@ -178,7 +178,7 @@ section {
     align-items: center;
     gap: 8px;
     padding: 12px 16px;
-    color: var(--text-primary);
+    color: var(--text-white);
     text-decoration: none;
     font-weight: 500;
     border-radius: var(--radius-md);
@@ -188,18 +188,18 @@ section {
 
 .nav-link:hover,
 .nav-link.active {
-    background: var(--bg-light);
-    color: var(--primary-color);
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-white);
 }
 
 .login-btn {
-    background: var(--primary-color) !important;
-    color: var(--text-white) !important;
+    background: var(--accent-color) !important;
+    color: var(--text-primary) !important;
     font-weight: 600;
 }
 
 .login-btn:hover {
-    background: var(--primary-dark) !important;
+    background: var(--accent-light) !important;
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
 }
@@ -256,7 +256,7 @@ section {
     background: none;
     border: none;
     font-size: 24px;
-    color: var(--text-primary);
+    color: var(--text-white);
     cursor: pointer;
     padding: 8px;
     border-radius: var(--radius-sm);
@@ -264,24 +264,16 @@ section {
 }
 
 .nav-toggle:hover {
-    background: var(--bg-light);
+    background: rgba(255, 255, 255, 0.1);
 }
 
-/* Hero Section Modernizada */
+/* Hero Section */
 .hero {
     position: relative;
     min-height: calc(100vh - 80px);
     display: flex;
     align-items: center;
     overflow: hidden;
-}
-
-.hero-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
 }
 
@@ -366,7 +358,7 @@ section {
     opacity: 0.8;
 }
 
-/* Botões Modernizados */
+/* Botões */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -415,6 +407,18 @@ section {
     box-shadow: var(--shadow-lg);
 }
 
+.btn-yellow {
+    background: var(--accent-color);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-yellow:hover {
+    background: var(--accent-light);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
 .btn-full {
     width: 100%;
     justify-content: center;
@@ -437,7 +441,7 @@ section {
     display: flex;
 }
 
-/* Seção Sobre Modernizada */
+/* Seção Sobre */
 .sobre-section {
     background: var(--bg-secondary);
 }
@@ -600,38 +604,13 @@ section {
     letter-spacing: 0.5px;
 }
 
-/* Seção Orçamento Modernizada */
+/* Seção Orçamento com fundo amarelo */
 .orcamento-section {
     position: relative;
     overflow: hidden;
     min-height: 500px;
     display: flex;
     align-items: center;
-}
-
-.orcamento-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
-
-.orcamento-blue {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: var(--primary-color);
-}
-
-.orcamento-yellow {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 15%;
     background: var(--accent-color);
 }
 
@@ -643,10 +622,11 @@ section {
     align-items: center;
     text-align: center;
     min-height: 400px;
+    width: 100%;
 }
 
 .orcamento-text {
-    color: var(--text-white);
+    color: var(--text-primary);
     max-width: 800px;
 }
 
@@ -655,8 +635,8 @@ section {
     align-items: center;
     gap: 8px;
     padding: 8px 16px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: var(--radius-lg);
     font-size: var(--font-size-sm);
     font-weight: 600;
@@ -667,13 +647,13 @@ section {
 .orcamento-text h2 {
     font-size: var(--font-size-4xl);
     margin-bottom: 24px;
+    color: var(--text-primary);
 }
 
 .orcamento-text p {
     font-size: var(--font-size-lg);
     margin-bottom: 32px;
-    opacity: 0.9;
-    color: var(--text-white);
+    color: var(--text-primary);
 }
 
 .orcamento-features {
@@ -688,21 +668,22 @@ section {
     align-items: center;
     gap: 12px;
     font-size: var(--font-size-base);
+    justify-content: center;
 }
 
 .feature-item i {
     width: 20px;
     height: 20px;
-    background: var(--accent-color);
+    background: var(--primary-color);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 12px;
-    color: var(--text-primary);
+    color: var(--text-white);
 }
 
-/* Seção Contato Modernizada */
+/* Seção Contato */
 .contato-section {
     background: var(--bg-secondary);
 }
@@ -758,7 +739,7 @@ section {
     margin: 0;
 }
 
-/* Formulários Modernizados */
+/* Formulários */
 .modern-form {
     display: flex;
     flex-direction: column;
@@ -800,7 +781,7 @@ section {
 .form-group textarea:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(0, 74, 141, 0.1);
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
 }
 
 .form-group textarea {
@@ -808,7 +789,7 @@ section {
     min-height: 120px;
 }
 
-/* Vagas Modernizadas */
+/* Vagas */
 .vagas-filters {
     display: flex;
     justify-content: center;
@@ -919,7 +900,7 @@ section {
     color: var(--primary-color);
 }
 
-/* Benefícios Modernizados */
+/* Benefícios */
 .modern-benefits {
     background: var(--bg-primary);
     padding: 60px 40px;
@@ -968,7 +949,7 @@ section {
     color: var(--text-primary);
 }
 
-/* Footer Modernizado */
+/* Footer escuro */
 .footer {
     background: var(--bg-dark);
     color: var(--text-white);
@@ -1066,7 +1047,7 @@ section {
     color: var(--accent-color);
 }
 
-/* Modal Modernizado */
+/* Modal */
 .modern-modal {
     display: none;
     position: fixed;
@@ -1157,7 +1138,7 @@ section {
 
 .upload-area:hover {
     border-color: var(--primary-color);
-    background: rgba(0, 74, 141, 0.05);
+    background: rgba(30, 58, 138, 0.05);
 }
 
 .upload-area i {
@@ -1197,7 +1178,7 @@ section {
     color: var(--text-white);
 }
 
-/* Checkbox Modernizado */
+/* Checkbox */
 .checkbox-group {
     margin: 24px 0;
 }
@@ -1240,10 +1221,10 @@ section {
     font-size: 12px;
 }
 
-/* Responsividade */
+/* Responsividade melhorada */
 @media (max-width: 1024px) {
     .container {
-        padding: 0 20px;
+        padding: 0 16px;
     }
     
     .hero-stats {
@@ -1251,7 +1232,6 @@ section {
     }
     
     .sobre-content,
-    .contato-content,
     .contato-content {
         grid-template-columns: 1fr;
         gap: 40px;
@@ -1272,11 +1252,10 @@ section {
         top: 70px;
         left: 0;
         right: 0;
-        background: #ffffff;
+        background: var(--primary-color);
         flex-direction: column;
         padding: 20px;
         box-shadow: var(--shadow-lg);
-        border-top: 2px solid var(--primary-color);
         transform: translateY(-100%);
         opacity: 0;
         visibility: hidden;
@@ -1301,18 +1280,23 @@ section {
         transform: none;
         box-shadow: none;
         border: none;
-        background: var(--bg-light);
+        background: rgba(255, 255, 255, 0.1);
         margin-top: 8px;
         border-radius: var(--radius-md);
+    }
+    
+    .dropdown-item {
+        color: var(--text-white);
+    }
+    
+    .dropdown-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--text-white);
     }
     
     .orcamento-content {
         padding: 40px 20px;
         min-height: 300px;
-    }
-    
-    .orcamento-text {
-        max-width: 100%;
     }
     
     section {
@@ -1387,7 +1371,7 @@ section {
 
 @media (max-width: 480px) {
     .container {
-        padding: 0 16px;
+        padding: 0 12px;
     }
     
     .hero h1 {
@@ -1414,6 +1398,29 @@ section {
     }
 }
 
+/* Melhorias de acessibilidade */
+.btn:focus,
+.nav-link:focus,
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Otimizações de performance */
+.hero,
+.orcamento-section {
+    will-change: transform;
+}
+
+.btn,
+.nav-link,
+.servico-card,
+.valor-card {
+    will-change: transform;
+}
+
 /* Animações */
 @keyframes fadeInUp {
     from {
@@ -1426,54 +1433,9 @@ section {
     }
 }
 
-@keyframes fadeInLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-@keyframes fadeInRight {
-    from {
-        opacity: 0;
-        transform: translateX(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-/* Scroll suave e otimizações */
+/* Scroll suave */
 * {
     scroll-behavior: smooth;
-}
-
-/* Melhorias de performance */
-.hero-background,
-.orcamento-background {
-    will-change: transform;
-}
-
-.btn,
-.nav-link,
-.servico-card,
-.valor-card {
-    will-change: transform;
-}
-
-/* Estados de foco para acessibilidade */
-.btn:focus,
-.nav-link:focus,
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    outline: 2px solid var(--primary-color);
-    outline-offset: 2px;
 }
 
 /* Melhorias para dispositivos touch */
@@ -1486,15 +1448,30 @@ section {
     }
 }
 
-/* Modo escuro (opcional) */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --text-primary: #ffffff;
-        --text-secondary: #a0a0a0;
-        --bg-primary: #1a1a1a;
-        --bg-secondary: #2d2d2d;
-        --bg-light: #3a3a3a;
-        --border-color: #404040;
-        --border-light: #505050;
+/* Correções específicas para zoom mobile */
+@media screen and (max-width: 768px) {
+    html {
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
     }
+    
+    body {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .container {
+        min-width: 0;
+        overflow-x: hidden;
+    }
+    
+    .nav-menu {
+        width: 100vw;
+        left: 0;
+        right: 0;
+    }
+}
+
+/* Estados ocultos para filtros */
+.vaga-card.hidden {
+    display: none;
 }

@@ -91,6 +91,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Tornar showPage disponível globalmente
+    window.showPage = showPage;
+
     showPage('home');
     
     // Melhorar experiência de toque em mobile
@@ -115,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ===== FUNCIONALIDADES DA PÁGINA DE VAGAS =====
 
-// Dropdown de vagas no menu
+// Dropdown de vagas no menu (simplificado)
 document.addEventListener('DOMContentLoaded', () => {
     const trabalheConoscoDropdown = document.getElementById('trabalhe-conosco-dropdown');
     const trabalheConoscoMenu = document.getElementById('trabalhe-conosco-menu');
@@ -134,26 +137,10 @@ document.addEventListener('DOMContentLoaded', () => {
         trabalheConoscoMenu.querySelectorAll('.dropdown-item').forEach(item => {
             item.addEventListener('click', (e) => {
                 e.preventDefault();
-                const category = item.dataset.category;
                 const page = item.dataset.page;
                 
-                if (page) {
-                    if (typeof showPage === 'function') {
-                        showPage(page);
-                    }
-                } else if (category) {
-                    if (typeof showPage === 'function') {
-                        showPage('vagas');
-                    }
-                    setTimeout(() => {
-                        if (typeof filtrarVagas === 'function') {
-                            filtrarVagas(category);
-                        }
-                        // Atualizar botão ativo
-                        document.querySelectorAll('.filter-btn').forEach(btn => {
-                            btn.classList.toggle('active', btn.dataset.category === category);
-                        });
-                    }, 100);
+                if (page && typeof window.showPage === 'function') {
+                    window.showPage(page);
                 }
             });
         });
@@ -203,11 +190,19 @@ document.addEventListener('DOMContentLoaded', () => {
 // Formulário de contato modernizado
 document.addEventListener('DOMContentLoaded', () => {
     const contactForm = document.getElementById('contact-form');
+    const contactFormPage = document.getElementById('contact-form-page');
     
     if (contactForm) {
         contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             await enviarFormularioContato(contactForm);
+        });
+    }
+    
+    if (contactFormPage) {
+        contactFormPage.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await enviarFormularioContato(contactFormPage);
         });
     }
 });
@@ -266,6 +261,12 @@ function abrirFormularioCandidatura(nomeVaga) {
     
     // Limpar formulário
     document.getElementById('candidatura-form').reset();
+    
+    // Resetar upload de arquivo
+    const filePreview = document.getElementById('file-preview');
+    const uploadArea = document.querySelector('#candidatura-modal .upload-area');
+    if (filePreview) filePreview.style.display = 'none';
+    if (uploadArea) uploadArea.style.display = 'block';
 }
 
 // Função para fechar o modal
@@ -323,7 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (file.type === 'application/pdf') {
                     fileName.textContent = file.name;
                     filePreview.style.display = 'flex';
-                    document.querySelector('.upload-area').style.display = 'none';
+                    document.querySelector('#candidatura-modal .upload-area').style.display = 'none';
                 } else {
                     showNotification('Por favor, selecione um arquivo PDF.', 'error');
                     e.target.value = '';
@@ -336,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
         removeFile.addEventListener('click', () => {
             curriculoUpload.value = '';
             filePreview.style.display = 'none';
-            document.querySelector('.upload-area').style.display = 'block';
+            document.querySelector('#candidatura-modal .upload-area').style.display = 'block';
         });
     }
 });
@@ -355,26 +356,26 @@ async function enviarCandidatura() {
     camposObrigatorios.forEach(campo => {
         const input = form.querySelector(`[name="${campo}"]`);
         if (!input.value.trim()) {
-            input.style.borderColor = '#e74c3c';
+            input.style.borderColor = '#ef4444';
             todosPreenchidos = false;
         } else {
-            input.style.borderColor = '#ddd';
+            input.style.borderColor = '#e5e7eb';
         }
     });
     
     // Verificar checkbox de termos
     const aceitoTermos = document.getElementById('aceito-termos');
     if (!aceitoTermos.checked) {
-        alert('Você deve aceitar os termos de uso para continuar.');
+        showNotification('Você deve aceitar os termos de uso para continuar.', 'error');
         return;
     }
     
     if (!todosPreenchidos) {
-        alert('Por favor, preencha todos os campos obrigatórios.');
+        showNotification('Por favor, preencha todos os campos obrigatórios.', 'error');
         return;
     }
     
-    // Simular envio (aqui você integraria com seu backend)
+    // Simular envio
     const submitBtn = form.querySelector('button[type="submit"]');
     const btnText = submitBtn.querySelector('.btn-text');
     const btnLoading = submitBtn.querySelector('.btn-loading');
@@ -397,7 +398,7 @@ async function enviarCandidatura() {
         };
         
         console.log('Dados da candidatura:', candidaturaData);
-        console.log('Enviando para: vagas.sudesteconservadora@gmail.com');
+        console.log('Enviando para: rh@novohorizonteconservadora.com.br');
         
         // Salvar candidatura no perfil do usuário (se logado)
         if (window.userManager && window.userManager.isLoggedIn()) {
@@ -409,7 +410,7 @@ async function enviarCandidatura() {
             });
         }
         
-        // Mostrar mensagem de sucesso mais profissional
+        // Mostrar mensagem de sucesso
         showNotification(`Candidatura para ${vaga} enviada com sucesso! Entraremos em contato em breve.`, 'success');
         fecharModalCandidatura();
         
@@ -447,7 +448,7 @@ function showNotification(message, type = 'info') {
         animation: slideInRight 0.3s ease-out;
         max-width: 400px;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-        background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#007bff'};
+        background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#06b6d4'};
     `;
     
     document.body.appendChild(notification);
@@ -465,10 +466,10 @@ function showNotification(message, type = 'info') {
 
 // Máscara para telefone
 document.addEventListener('DOMContentLoaded', () => {
-    const telefoneInput = document.getElementById('telefone');
+    const telefoneInputs = document.querySelectorAll('input[type="tel"]');
     
-    if (telefoneInput) {
-        telefoneInput.addEventListener('input', (e) => {
+    telefoneInputs.forEach(input => {
+        input.addEventListener('input', (e) => {
             let value = e.target.value.replace(/\D/g, '');
             
             if (value.length <= 11) {
@@ -481,10 +482,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             e.target.value = value;
         });
-    }
+    });
 });
 
-// Animações de scroll para a página de vagas
+// Animações de scroll
 document.addEventListener('DOMContentLoaded', () => {
     // Intersection Observer para animações
     const observerOptions = {
@@ -517,6 +518,15 @@ document.addEventListener('DOMContentLoaded', () => {
         item.style.transform = 'translateY(20px)';
         item.style.transition = `all 0.4s ease ${index * 0.1}s`;
         observer.observe(item);
+    });
+    
+    // Observar cards de serviço
+    const servicoCards = document.querySelectorAll('.servico-card');
+    servicoCards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        card.style.transition = `all 0.6s ease ${index * 0.1}s`;
+        observer.observe(card);
     });
 });
 
@@ -556,3 +566,8 @@ notificationStyles.textContent = `
     }
 `;
 document.head.appendChild(notificationStyles);
+
+// Tornar funções disponíveis globalmente
+window.abrirFormularioCandidatura = abrirFormularioCandidatura;
+window.fecharModalCandidatura = fecharModalCandidatura;
+window.showNotification = showNotification;
