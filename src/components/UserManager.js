@@ -1,9 +1,7 @@
 /**
- * Gerenciador de Usuário com Supabase Integrado
+ * Gerenciador de Usuário Local Simplificado
  * Sistema completo de perfil e painel do usuário
  */
-
-import { supabase } from '../lib/supabase.js'
 
 export class UserManager {
   constructor() {
@@ -20,16 +18,6 @@ export class UserManager {
   }
 
   setupAuthListeners() {
-    if (supabase) {
-      supabase.auth.onAuthStateChange((event, session) => {
-        if (event === 'SIGNED_IN') {
-          this.handleUserSignIn(session.user)
-        } else if (event === 'SIGNED_OUT') {
-          this.handleUserSignOut()
-        }
-      })
-    }
-
     // Listeners customizados
     document.addEventListener('userAuthenticated', (e) => {
       this.handleUserSignIn(e.detail.user)
@@ -42,21 +30,11 @@ export class UserManager {
 
   async checkCurrentUser() {
     try {
-      if (supabase) {
-        const { data: { user }, error } = await supabase.auth.getUser()
-        
-        if (user && !error) {
-          this.currentUser = user
-          await this.loadUserProfile()
-          await this.loadUserApplications()
-        }
-      } else {
-        // Sistema local
-        const userData = localStorage.getItem('current_user')
-        if (userData) {
-          this.currentUser = JSON.parse(userData)
-          this.userProfile = this.currentUser
-        }
+      // Sistema local apenas
+      const userData = localStorage.getItem('current_user')
+      if (userData) {
+        this.currentUser = JSON.parse(userData)
+        this.userProfile = this.currentUser
       }
     } catch (error) {
       console.error('Erro ao verificar usuário atual:', error)

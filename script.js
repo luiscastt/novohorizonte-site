@@ -117,32 +117,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Dropdown de vagas no menu
 document.addEventListener('DOMContentLoaded', () => {
-    const vagasDropdown = document.getElementById('vagas-dropdown');
-    const vagasMenu = document.getElementById('vagas-menu');
+    const trabalheConoscoDropdown = document.getElementById('trabalhe-conosco-dropdown');
+    const trabalheConoscoMenu = document.getElementById('trabalhe-conosco-menu');
     
-    if (vagasDropdown && vagasMenu) {
+    if (trabalheConoscoDropdown && trabalheConoscoMenu) {
         // Adicionar comportamento de hover para desktop
-        vagasDropdown.parentElement.addEventListener('mouseenter', () => {
-            vagasMenu.classList.add('show');
+        trabalheConoscoDropdown.parentElement.addEventListener('mouseenter', () => {
+            trabalheConoscoMenu.classList.add('show');
         });
         
-        vagasDropdown.parentElement.addEventListener('mouseleave', () => {
-            vagasMenu.classList.remove('show');
+        trabalheConoscoDropdown.parentElement.addEventListener('mouseleave', () => {
+            trabalheConoscoMenu.classList.remove('show');
         });
         
         // Clique nos itens do dropdown
-        vagasMenu.querySelectorAll('.dropdown-item').forEach(item => {
+        trabalheConoscoMenu.querySelectorAll('.dropdown-item').forEach(item => {
             item.addEventListener('click', (e) => {
                 e.preventDefault();
                 const category = item.dataset.category;
                 const page = item.dataset.page;
                 
                 if (page) {
-                    showPage(page);
+                    if (typeof showPage === 'function') {
+                        showPage(page);
+                    }
                 } else if (category) {
-                    showPage('vagas');
+                    if (typeof showPage === 'function') {
+                        showPage('vagas');
+                    }
                     setTimeout(() => {
-                        filtrarVagas(category);
+                        if (typeof filtrarVagas === 'function') {
+                            filtrarVagas(category);
+                        }
                         // Atualizar botão ativo
                         document.querySelectorAll('.filter-btn').forEach(btn => {
                             btn.classList.toggle('active', btn.dataset.category === category);
@@ -160,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const vagaCards = document.querySelectorAll('.vaga-card');
     
     // Função para filtrar vagas
-    function filtrarVagas(categoria) {
+    window.filtrarVagas = function(categoria) {
         vagaCards.forEach(card => {
             if (categoria === 'todas' || card.dataset.category === categoria) {
                 card.classList.remove('hidden');
@@ -176,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 card.classList.add('hidden');
             }
         });
-    }
+    };
     
     // Event listeners para os filtros
     filterButtons.forEach(button => {
@@ -187,7 +193,9 @@ document.addEventListener('DOMContentLoaded', () => {
             button.classList.add('active');
             // Filtrar vagas
             const categoria = button.dataset.category;
-            filtrarVagas(categoria);
+            if (typeof window.filtrarVagas === 'function') {
+                window.filtrarVagas(categoria);
+            }
         });
     });
 });

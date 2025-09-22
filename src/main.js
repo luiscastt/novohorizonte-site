@@ -1,13 +1,11 @@
 import { AuthModal } from './components/AuthModal.js'
 import { UserManager } from './components/UserManager.js'
-import { isSupabaseAvailable, handleAuthCallback } from './lib/supabase.js'
 
 /**
- * Inicialização do sistema modernizado
+ * Inicialização do sistema local simplificado
  */
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('Inicializando sistema...')
-  console.log('Supabase disponível:', isSupabaseAvailable())
+  console.log('Inicializando sistema local...')
   
   // Criar instâncias dos componentes
   const authModal = new AuthModal()
@@ -23,18 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
     console.warn('Botão de login não encontrado')
   }
 
-  // Lidar com callback de OAuth
-  const urlParams = new URLSearchParams(window.location.search)
-  if (isSupabaseAvailable() && urlParams.has('code')) {
-    handleAuthCallback().then(session => {
-      if (session) {
-        console.log('Callback de autenticação processado com sucesso')
-        // Limpar URL
-        window.history.replaceState({}, document.title, window.location.pathname)
-      }
-    })
-  }
-
   // Tornar disponível globalmente
   if (typeof window !== 'undefined') {
     window.authModal = authModal
@@ -46,9 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log('- Usuário logado:', userManager.isLoggedIn())
       console.log('- Usuário atual:', userManager.getUser())
       console.log('- Perfil do usuário:', userManager.getUserProfile())
-      console.log('- Supabase disponível:', isSupabaseAvailable())
+      console.log('- Sistema local ativo')
     }
   }
-  
-}
-)

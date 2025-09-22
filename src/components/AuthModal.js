@@ -1,9 +1,7 @@
 /**
- * Sistema de Autenticação Modernizado com Supabase
- * Integração completa com Google e LinkedIn
+ * Sistema de Autenticação Local Simplificado
+ * Compatível com qualquer hospedagem
  */
-
-import { supabase } from '../lib/supabase.js'
 
 export class AuthModal {
   constructor() {
@@ -16,25 +14,6 @@ export class AuthModal {
   init() {
     this.createModal()
     this.attachEventListeners()
-    this.setupSupabaseAuth()
-  }
-
-  setupSupabaseAuth() {
-    if (!supabase) {
-      console.warn('Supabase não disponível, usando sistema local')
-      return
-    }
-
-    // Listener para mudanças de autenticação
-    supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state changed:', event, session)
-      
-      if (event === 'SIGNED_IN') {
-        this.handleSuccessfulAuth(session.user)
-      } else if (event === 'SIGNED_OUT') {
-        this.handleSignOut()
-      }
-    })
   }
 
   createModal() {
@@ -161,12 +140,12 @@ export class AuthModal {
     // Login social
     document.getElementById('google-login').addEventListener('click', (e) => {
       e.preventDefault()
-      this.handleSocialLogin('google')
+      this.showMessage('Login social não disponível no momento', 'info')
     })
 
     document.getElementById('linkedin-login').addEventListener('click', (e) => {
       e.preventDefault()
-      this.handleSocialLogin('linkedin_oidc')
+      this.showMessage('Login social não disponível no momento', 'info')
     })
   }
 
