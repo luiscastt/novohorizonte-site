@@ -35,3 +35,5 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log('- Sistema local ativo')
     }
   }
+}
+)
